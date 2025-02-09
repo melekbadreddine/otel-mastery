@@ -1,0 +1,31 @@
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-3xl font-bold text-center mb-8">Our Products</h1>
+  
+  <!-- Debugging: show raw JSON -->
+  <pre class="bg-gray-100 p-4 rounded mb-6">{{ products | json }}</pre>
+  
+  <div class="flex mb-6 justify-center">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search products..."
+           class="border rounded-l px-4 py-2 w-3/4" />
+    <button (click)="searchProducts()"
+            class="bg-blue-500 text-white px-4 py-2 rounded-r hover:bg-blue-600">
+      Search
+    </button>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div *ngFor="let product of products" class="bg-white shadow-md rounded-lg overflow-hidden">
+      <img [src]="product.image_url" alt="{{ product.name }}" class="w-full h-56 object-cover">
+      <div class="p-4">
+        <h2 class="text-xl font-semibold mb-2">{{ product.name }}</h2>
+        <p class="text-gray-600 mb-2">{{ product.description }}</p>
+        <p class="text-green-600 font-bold mb-4">$ {{ product.price }}</p>
+        <button (click)="addToCart(product)"
+                class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 flex items-center justify-center">
+          <i class="fas fa-cart-plus mr-2"></i> Add to Cart
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+

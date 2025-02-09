@@ -1,0 +1,29 @@
+<nav class="bg-gray-800 shadow">
+  <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <a routerLink="/" class="text-white text-2xl font-bold">
+      E-Commerce Store
+    </a>
+    <div class="flex items-center space-x-6">
+      <a routerLink="/products" class="text-gray-300 hover:text-white text-xl">
+        <i class="fas fa-th-large"></i>
+      </a>
+      <a routerLink="/cart" class="text-gray-300 hover:text-white relative text-xl">
+        <i class="fas fa-shopping-cart"></i>
+        <span *ngIf="cartItemCount > 0"
+              class="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+          {{ cartItemCount }}
+        </span>
+      </a>
+      <a routerLink="/orders" class="text-gray-300 hover:text-white text-xl">
+        <i class="fas fa-box-open"></i>
+      </a>
+      <a routerLink="/inventory" class="text-gray-300 hover:text-white text-xl">
+        <i class="fas fa-warehouse"></i>
+      </a>
+    </div>
+  </div>
+</nav>
+<div class="container mx-auto mt-6">
+  <router-outlet></router-outlet>
+</div>
+

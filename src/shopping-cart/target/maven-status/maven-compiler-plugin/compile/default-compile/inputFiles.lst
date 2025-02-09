@@ -1,0 +1,10 @@
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/service/KafkaProducerService.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/model/CheckoutEvent.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/config/CorsConfig.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/ShoppingCartApplication.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/model/CartItem.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/config/KafkaConfig.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/service/CartService.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/model/Cart.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/config/RedisConfig.java
+/home/melek/otel-mastery/shopping-cart/src/main/java/com/ecommerce/cart/controller/CartController.java

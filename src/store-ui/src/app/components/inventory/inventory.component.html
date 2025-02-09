@@ -1,0 +1,18 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Inventory</h2>
+  <table class="min-w-full bg-white">
+    <thead>
+      <tr>
+        <th class="py-2">Product ID</th>
+        <th class="py-2">Stock</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of inventory">
+        <td class="border px-4 py-2">{{ item.productId }}</td>
+        <td class="border px-4 py-2">{{ item.stock }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+

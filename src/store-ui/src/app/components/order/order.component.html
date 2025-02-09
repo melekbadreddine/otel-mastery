@@ -1,0 +1,14 @@
+<div class="p-4">
+  <h2 class="text-2xl font-bold mb-4">Order Details</h2>
+  <input type="number" [(ngModel)]="orderId" placeholder="Enter Order ID" class="border p-2 rounded">
+  <button (click)="getOrder()" class="bg-blue-500 text-white px-4 py-2 rounded ml-2">Get Order</button>
+
+  <div *ngIf="order" class="mt-4 border p-4 rounded shadow">
+    <p><strong>Order Number:</strong> {{ order.orderNumber }}</p>
+    <p><strong>Status:</strong> {{ order.orderStatus }}</p>
+    <p><strong>Payment:</strong> {{ order.paymentStatus }}</p>
+    <p><strong>Checkout Time:</strong> {{ order.checkoutTime }}</p>
+    <p><strong>Items:</strong> {{ order.items }}</p>
+  </div>
+</div>
+
