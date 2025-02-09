@@ -20,5 +20,9 @@ export class OrderComponent {
       });
     }
   }
+
+  get checkoutTime(): string {
+    return this.order ? new Date(this.order.checkoutTime).toLocaleString() : '';
+  }
 }
 

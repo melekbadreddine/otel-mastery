@@ -1,0 +1,16 @@
+/* Custom transitions */
+.hover-scale {
+  @apply transition-transform duration-300 hover:scale-105;
+}
+
+/* Custom shadows */
+.shadow-glass {
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Gradient text */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r;
+}

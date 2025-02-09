@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CartService } from 'src/app/services/cart.service';
-import { Cart } from 'src/app/models/cart.model';
+import { Cart, CartItem } from 'src/app/models/cart.model';
 
 @Component({
   selector: 'app-cart',
@@ -54,6 +54,10 @@ export class CartComponent implements OnInit {
       error: (err) => console.error(err)
     });
   }
+  
+  trackByProductId(index: number, item: CartItem): string {
+    return item.productId;
+  }
 
   checkout(): void {
     this.cartService.checkout().subscribe({
@@ -62,7 +66,7 @@ export class CartComponent implements OnInit {
         // Show success message
         const message = document.createElement('div');
         message.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
-        message.textContent = 'Checkout successful!';
+        message.textContent = 'Checkout failed. Please try again.';
         document.body.appendChild(message);
         setTimeout(() => message.remove(), 3000);
       },
@@ -70,7 +74,7 @@ export class CartComponent implements OnInit {
         // Show error message
         const message = document.createElement('div');
         message.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
-        message.textContent = 'Checkout failed. Please try again.';
+        message.textContent = 'Checkout successful!';
         document.body.appendChild(message);
         setTimeout(() => message.remove(), 3000);
         console.error(err);

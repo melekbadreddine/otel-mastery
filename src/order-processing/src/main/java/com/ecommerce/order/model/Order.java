@@ -1,5 +1,6 @@
 package com.ecommerce.order.model;
 
+import com.fasterxml.jackson.annotation.JsonRawValue;
 import jakarta.persistence.*;
 import java.time.Instant;
 
@@ -14,6 +15,7 @@ public class Order {
     private String orderNumber;
 
     // Store the order details (e.g. cart items) as JSON text
+    @JsonRawValue
     @Column(columnDefinition = "TEXT")
     private String items;
 
