@@ -29,7 +29,7 @@ export class CartService {
   }
 
   checkout(): Observable<any> {
-    return this.http.post(`${this.baseUrl}/cart/checkout`, {});
+    return this.http.post(`${this.baseUrl}/cart/checkout`, {}, { responseType: 'text' });
   }
 }
 

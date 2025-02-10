@@ -63,22 +63,20 @@ export class CartComponent implements OnInit {
     this.cartService.checkout().subscribe({
       next: () => {
         this.cart = { items: [] };
-        // Show success message
-        const message = document.createElement('div');
-        message.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
-        message.textContent = 'Checkout failed. Please try again.';
-        document.body.appendChild(message);
-        setTimeout(() => message.remove(), 3000);
+        this.showMessage('Checkout successful!', 'green');
       },
       error: (err) => {
-        // Show error message
-        const message = document.createElement('div');
-        message.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
-        message.textContent = 'Checkout successful!';
-        document.body.appendChild(message);
-        setTimeout(() => message.remove(), 3000);
+        this.showMessage('Checkout failed. Please try again.', 'red');
         console.error(err);
       }
     });
+  }
+
+  private showMessage(message: string, color: 'green' | 'red'): void {
+    const messageElement = document.createElement('div');
+    messageElement.className = `fixed bottom-4 right-4 bg-${color}-500 text-white px-6 py-3 rounded-lg shadow-lg`;
+    messageElement.textContent = message;
+    document.body.appendChild(messageElement);
+    setTimeout(() => messageElement.remove(), 3000);
   }
 }

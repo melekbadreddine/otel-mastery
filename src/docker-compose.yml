@@ -42,9 +42,9 @@ services:
       - zookeeper
 
   product-catalog:
-    image: melekbadreddine/product:latest
+    image: melekbadreddine/products:latest
     pull_policy: if_not_present
-    container_name: product
+    container_name: products
     ports:
       - "3001:3001"
     environment:
@@ -56,9 +56,9 @@ services:
       - kafka
       
   shopping-cart:
-    image: melekbadreddine/shopping:latest
+    image: melekbadreddine/cart:latest
     pull_policy: if_not_present
-    container_name: shopping
+    container_name: cart
     ports:
       - "3002:3002"
     environment:
@@ -69,9 +69,9 @@ services:
       - kafka
 
   order-processing:
-    image: melekbadreddine/order:latest
+    image: melekbadreddine/orders:latest
     pull_policy: if_not_present
-    container_name: order
+    container_name: orders
     ports:
       - "3003:3003"
     environment:
