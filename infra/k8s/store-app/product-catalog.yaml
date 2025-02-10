@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog
+  namespace: store-app
+  labels:
+    app: product-catalog
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: product-catalog
+  template:
+    metadata:
+      labels:
+        app: product-catalog
+    spec:
+      containers:
+      - name: product-catalog
+        image: melekbadreddine/products:latest
+        ports:
+        - containerPort: 3001
+        env:
+        - name: MONGO_URI
+          value: "mongodb://mongodb.store-infra:27017"
+        - name: KAFKA_BROKER
+          value: "kafka.store-infra:9092"
+        - name: PORT
+          value: "3001"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-catalog
+  namespace: store-app
+spec:
+  selector:
+    app: product-catalog
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+  type: ClusterIP

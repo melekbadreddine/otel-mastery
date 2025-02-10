@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shopping-cart
+  namespace: store-app
+  labels:
+    app: shopping-cart
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shopping-cart
+  template:
+    metadata:
+      labels:
+        app: shopping-cart
+    spec:
+      containers:
+      - name: shopping-cart
+        image: melekbadreddine/cart:latest
+        ports:
+        - containerPort: 3002
+        env:
+        - name: SPRING_REDIS_HOST
+          value: "redis.store-infra"
+        - name: kafka.bootstrap-servers
+          value: "kafka.store-infra:9092"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-cart
+  namespace: store-app
+spec:
+  selector:
+    app: shopping-cart
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+  type: ClusterIP
+

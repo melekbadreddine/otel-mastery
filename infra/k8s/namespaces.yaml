@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: store-app
+  labels:
+    env: production
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: store-monitoring
+  labels:
+    component: monitoring
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: store-infra
+  labels:
+    component: infrastructure
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: store-otel
+  labels:
+    component: observability
+
