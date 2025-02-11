@@ -6,7 +6,7 @@ metadata:
   labels:
     app: order-processing
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: order-processing
@@ -44,5 +44,5 @@ spec:
     - protocol: TCP
       port: 3003
       targetPort: 3003
-  type: ClusterIP
-
+      nodePort: 31203
+  type: NodePort

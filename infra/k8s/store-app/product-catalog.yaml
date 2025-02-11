@@ -6,7 +6,7 @@ metadata:
   labels:
     app: product-catalog
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: product-catalog
@@ -40,4 +40,6 @@ spec:
     - protocol: TCP
       port: 3001
       targetPort: 3001
-  type: ClusterIP
+      nodePort: 31201
+  type: NodePort
+

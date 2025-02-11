@@ -6,7 +6,7 @@ metadata:
   labels:
     app: inventory-management
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: inventory-management
@@ -40,5 +40,5 @@ spec:
     - protocol: TCP
       port: 3004
       targetPort: 3004
-  type: ClusterIP
-
+      nodePort: 31204
+  type: NodePort

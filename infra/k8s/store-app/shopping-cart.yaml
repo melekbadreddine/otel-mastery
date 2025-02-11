@@ -6,7 +6,7 @@ metadata:
   labels:
     app: shopping-cart
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: shopping-cart
@@ -38,5 +38,6 @@ spec:
     - protocol: TCP
       port: 3002
       targetPort: 3002
-  type: ClusterIP
+      nodePort: 31202
+  type: NodePort
 
