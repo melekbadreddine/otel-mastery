@@ -32,6 +32,7 @@ spec:
       containers:
       - name: zookeeper
         image: bitnami/zookeeper:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: ALLOW_ANONYMOUS_LOGIN
           value: "yes"

@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: store-otel
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          http:
+            endpoint: "0.0.0.0:4318"
+
+      hostmetrics:
+        collection_interval: 10s
+        scrapers:
+          cpu: {}
+          load: {}
+          memory: {}
+          disk: {}
+          filesystem: {}
+    
+    processors:
+      k8sattributes: {}
+      batch:
+        timeout: 10s
+        send_batch_size: 1024
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 1024
+    
+    exporters:
+      prometheus:
+        endpoint: "0.0.0.0:8889"
+      loki:
+        endpoint: "http://loki.store-monitoring:3100/loki/api/v1/push"
+      otlp:
+        endpoint: "tempo.store-monitoring:4317"
+        tls:
+          insecure: true
+    
+    extensions:
+      health_check:
+        endpoint: "0.0.0.0:13133"
+    
+    service:
+      extensions: [health_check]
+      pipelines:
+        metrics:
+          receivers: [otlp, hostmetrics]
+          processors: [memory_limiter, batch]
+          exporters: [prometheus]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [loki]
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [otlp]

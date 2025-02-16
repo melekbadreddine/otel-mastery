@@ -14,10 +14,13 @@ spec:
     metadata:
       labels:
         app: inventory-management
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "true"
     spec:
       containers:
       - name: inventory-management
         image: melekbadreddine/inventory:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3004
         env:
@@ -27,6 +30,10 @@ spec:
           value: "kafka.store-infra:9092"
         - name: KAFKA_TOPIC
           value: "order-confirmation"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.store-otel:4318"
+        - name: OTEL_SERVICE_NAME
+          value: "inventory-management"
 ---
 apiVersion: v1
 kind: Service

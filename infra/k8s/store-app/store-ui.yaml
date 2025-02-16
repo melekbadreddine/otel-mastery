@@ -14,12 +14,20 @@ spec:
     metadata:
       labels:
         app: store-ui
+      annotations:
+        instrumentation.opentelemetry.io/inject-nodejs: "true"
     spec:
       containers:
       - name: store-ui
         image: melekbadreddine/store:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 4200
+        env:
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.store-otel:4318"
+        - name: OTEL_SERVICE_NAME
+          value: "store-ui"
 ---
 apiVersion: v1
 kind: Service

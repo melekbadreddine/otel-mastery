@@ -14,10 +14,13 @@ spec:
     metadata:
       labels:
         app: product-catalog
+      annotations:
+        instrumentation.opentelemetry.io/inject-go: "true"
     spec:
       containers:
       - name: product-catalog
         image: melekbadreddine/products:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3001
         env:
@@ -27,6 +30,10 @@ spec:
           value: "kafka.store-infra:9092"
         - name: PORT
           value: "3001"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.store-otel:4318"
+        - name: OTEL_SERVICE_NAME
+          value: "product-catalog"
 ---
 apiVersion: v1
 kind: Service

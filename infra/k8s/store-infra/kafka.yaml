@@ -32,10 +32,12 @@ spec:
       initContainers:
       - name: wait-for-zookeeper
         image: busybox:latest
+        imagePullPolicy: IfNotPresent
         command: ['sh', '-c', 'until nc -z zookeeper.store-infra 2181; do echo "Waiting for zookeeper..."; sleep 5; done;']
       containers:
       - name: kafka
         image: bitnami/kafka:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: KAFKA_BROKER_ID
           value: "1"

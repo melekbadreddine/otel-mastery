@@ -14,10 +14,13 @@ spec:
     metadata:
       labels:
         app: shopping-cart
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
       - name: shopping-cart
         image: melekbadreddine/cart:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3002
         env:
@@ -25,6 +28,10 @@ spec:
           value: "redis.store-infra"
         - name: kafka.bootstrap-servers
           value: "kafka.store-infra:9092"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.store-otel:4318"
+        - name: OTEL_SERVICE_NAME
+          value: "shopping-cart"
 ---
 apiVersion: v1
 kind: Service

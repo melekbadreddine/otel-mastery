@@ -14,10 +14,13 @@ spec:
     metadata:
       labels:
         app: order-processing
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
     spec:
       containers:
       - name: order-processing
         image: melekbadreddine/orders:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3003
         env:
@@ -31,6 +34,10 @@ spec:
           value: "kafka.store-infra:9092"
         - name: spring.kafka.bootstrap-servers
           value: "kafka.store-infra:9092"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://otel-collector.store-otel:4318"
+        - name: OTEL_SERVICE_NAME
+          value: "order-processing"
 ---
 apiVersion: v1
 kind: Service
