@@ -18,37 +18,55 @@ data:
           load: {}
           memory: {}
           disk: {}
-          filesystem: {}
-    
+          filesystem:
+            exclude_mount_points:
+              match_type: strict
+              mount_points:
+                - /usr/lib/modules
+                - /data
+                - /tmp/hostpath_pv
+                - /tmp/hostpath-provisioner
+
     processors:
-      k8sattributes: {}
+      k8sattributes:
+        auth_type: serviceAccount
+        passthrough: false
+        extract:
+          metadata:
+            - k8s.pod.name
+            - k8s.namespace.name
+            - k8s.deployment.name
       batch:
         timeout: 10s
         send_batch_size: 1024
       memory_limiter:
         check_interval: 1s
         limit_mib: 1024
-    
+
     exporters:
       prometheus:
         endpoint: "0.0.0.0:8889"
       loki:
         endpoint: "http://loki.store-monitoring:3100/loki/api/v1/push"
       otlp:
-        endpoint: "tempo.store-monitoring:4317"
+        endpoint: "http://tempo.store-monitoring:4318"
+        protocol: http/protobuf
         tls:
           insecure: true
-    
+
     extensions:
       health_check:
         endpoint: "0.0.0.0:13133"
-    
+
     service:
       extensions: [health_check]
+      telemetry:
+        logs:
+          level: debug
       pipelines:
         metrics:
           receivers: [otlp, hostmetrics]
-          processors: [memory_limiter, batch]
+          processors: [k8sattributes, memory_limiter, batch]
           exporters: [prometheus]
         logs:
           receivers: [otlp]

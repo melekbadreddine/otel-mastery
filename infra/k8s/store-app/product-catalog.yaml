@@ -16,6 +16,8 @@ spec:
         app: product-catalog
       annotations:
         instrumentation.opentelemetry.io/inject-go: "true"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/root/product-catalog"
+        instrumentation.opentelemetry.io/go-auto-include-dependencies: "true"
     spec:
       containers:
       - name: product-catalog
@@ -34,6 +36,14 @@ spec:
           value: "http://otel-collector.store-otel:4318"
         - name: OTEL_SERVICE_NAME
           value: "product-catalog"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "http/protobuf"
+        - name: OTEL_TRACES_SAMPLER
+          value: "parentbased_always_on"
+        - name: OTEL_METRICS_ENABLED
+          value: "true"
+        - name: OTEL_LOGS_ENABLED
+          value: "true"
 ---
 apiVersion: v1
 kind: Service

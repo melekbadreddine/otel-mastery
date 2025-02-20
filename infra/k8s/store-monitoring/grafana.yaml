@@ -20,6 +20,10 @@ data:
       type: tempo
       url: http://tempo:3200
       access: proxy
+    - name: Mimir
+      type: Prometheus
+      url: http://mimir:9009
+      access: proxy
 ---
 apiVersion: apps/v1
 kind: Deployment

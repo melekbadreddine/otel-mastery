@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mimir-config
+  namespace: store-monitoring
+data:
+  mimir.yaml: |
+    server:
+      http_listen_port: 9009
+    memberlist:
+      bind_port: 7946
+      join_members: []
+    blocks_storage:
+      backend: filesystem
+      filesystem:
+        dir: /data/mimir/tsdb
+    ingester:
+      ring:
+        instance_addr: 127.0.0.1
+        kvstore:
+          store: memberlist
+        replication_factor: 1
+    compactor:
+      data_dir: /data/mimir/compactor
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mimir
+  namespace: store-monitoring
+spec:
+  serviceName: mimir
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mimir
+  template:
+    metadata:
+      labels:
+        app: mimir
+    spec:
+      containers:
+      - name: mimir
+        image: grafana/mimir:2.10.1
+        args:
+          - "-target=all"
+          - "-config.file=/etc/mimir/mimir.yaml"
+        ports:
+        - containerPort: 9009
+          name: http
+        volumeMounts:
+          - name: config
+            mountPath: /etc/mimir
+          - name: data
+            mountPath: /data/mimir
+      volumes:
+      - name: config
+        configMap:
+          name: mimir-config
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mimir
+  namespace: store-monitoring
+spec:
+  ports:
+    - port: 9009
+      targetPort: http
+  selector:
+    app: mimir

@@ -16,6 +16,7 @@ spec:
         app: shopping-cart
       annotations:
         instrumentation.opentelemetry.io/inject-java: "true"
+        instrumentation.opentelemetry.io/instrumentation: "multi-lang-instrumentation"
     spec:
       containers:
       - name: shopping-cart
@@ -32,6 +33,14 @@ spec:
           value: "http://otel-collector.store-otel:4318"
         - name: OTEL_SERVICE_NAME
           value: "shopping-cart"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "http/protobuf"
+        - name: OTEL_TRACES_SAMPLER
+          value: "parentbased_always_on"
+        - name: OTEL_METRICS_ENABLED
+          value: "true"
+        - name: OTEL_LOGS_ENABLED
+          value: "true"
 ---
 apiVersion: v1
 kind: Service
