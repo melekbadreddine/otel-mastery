@@ -13,6 +13,7 @@ spec:
         matchLabels:
           name: store-app
     ports:
+    - port: 4317
     - port: 4318
     - port: 3100
       protocol: TCP

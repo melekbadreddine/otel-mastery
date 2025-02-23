@@ -16,7 +16,7 @@ spec:
         app: product-catalog
       annotations:
         instrumentation.opentelemetry.io/inject-go: "true"
-        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/root/product-catalog"
+        instrumentation.opentelemetry.io/otel-go-auto-target-exe: "/app/product-catalog"
         instrumentation.opentelemetry.io/go-auto-include-dependencies: "true"
     spec:
       containers:

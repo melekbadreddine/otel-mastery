@@ -8,6 +8,8 @@ data:
     receivers:
       otlp:
         protocols:
+          grpc:
+            endpoint: "0.0.0.0:4317"
           http:
             endpoint: "0.0.0.0:4318"
 
@@ -44,13 +46,14 @@ data:
         limit_mib: 1024
 
     exporters:
+      logging:
+        loglevel: debug
       prometheus:
         endpoint: "0.0.0.0:8889"
       loki:
         endpoint: "http://loki.store-monitoring:3100/loki/api/v1/push"
-      otlp:
+      otlphttp:
         endpoint: "http://tempo.store-monitoring:4318"
-        protocol: http/protobuf
         tls:
           insecure: true
 
@@ -75,4 +78,4 @@ data:
         traces:
           receivers: [otlp]
           processors: [memory_limiter, batch]
-          exporters: [otlp]
+          exporters: [logging, otlphttp]
