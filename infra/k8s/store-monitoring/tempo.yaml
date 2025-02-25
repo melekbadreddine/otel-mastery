@@ -27,6 +27,10 @@ data:
         block_retention: 24h
 
     metrics_generator:
+      processor:
+        service_graphs:
+          dimensions: ["cluster", "namespace"]
+        local_blocks: {} 
       storage:
         path: /data/tempo/metrics
 
@@ -49,7 +53,7 @@ spec:
     spec:
       containers:
         - name: tempo
-          image: grafana/tempo:2.3.0
+          image: grafana/tempo:2.4.0
           args:
             - --config.file=/etc/tempo/tempo.yaml
           ports:

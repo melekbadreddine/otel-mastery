@@ -37,6 +37,8 @@ spec:
           value: "true"
         - name: OTEL_LOGS_ENABLED
           value: "true"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
 ---
 apiVersion: v1
 kind: Service

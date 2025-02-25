@@ -24,6 +24,10 @@ data:
       type: Prometheus
       url: http://mimir:9009
       access: proxy
+      jsonData:
+        httpHeaderName1: X-Scope-OrgID
+      secureJsonData:
+        httpHeaderValue1: qim-info
 ---
 apiVersion: apps/v1
 kind: Deployment

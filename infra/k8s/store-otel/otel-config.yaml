@@ -6,6 +6,9 @@ metadata:
 data:
   config.yaml: |
     receivers:
+      k8s_events:
+        namespaces: []
+
       otlp:
         protocols:
           grpc:
@@ -30,6 +33,18 @@ data:
                 - /tmp/hostpath-provisioner
 
     processors:
+      attributes:
+        actions:
+          - action: insert
+            key: loki.attribute.labels
+            value: event.domain, event.name
+      
+      resource:
+        attributes:
+          - action: insert
+            key: loki.resource.labels
+            value: service.name, service.namespace
+
       k8sattributes:
         auth_type: serviceAccount
         passthrough: false
@@ -38,6 +53,7 @@ data:
             - k8s.pod.name
             - k8s.namespace.name
             - k8s.deployment.name
+
       batch:
         timeout: 10s
         send_batch_size: 1024
@@ -63,19 +79,16 @@ data:
 
     service:
       extensions: [health_check]
-      telemetry:
-        logs:
-          level: debug
       pipelines:
         metrics:
           receivers: [otlp, hostmetrics]
           processors: [k8sattributes, memory_limiter, batch]
           exporters: [prometheus]
         logs:
-          receivers: [otlp]
+          receivers: [otlp, k8s_events]
           processors: [memory_limiter, batch]
           exporters: [loki]
         traces:
           receivers: [otlp]
           processors: [memory_limiter, batch]
-          exporters: [logging, otlphttp]
+          exporters: [otlphttp]
