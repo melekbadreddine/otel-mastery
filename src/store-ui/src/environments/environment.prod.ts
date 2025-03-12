@@ -1,10 +1,12 @@
+const IP = '192.168.58.2';
+
 export const environment = {
   production: true,
   apiUrls: {
-    productCatalog: 'http://192.168.49.2:31201',
-    shoppingCart: 'http://192.168.49.2:31202',
-    orderProcessing: 'http://192.168.49.2:31203',
-    inventoryManagement: 'http://192.168.49.2:31204'
+    productCatalog: `http://${IP}:31201`,
+    shoppingCart: `http://${IP}:31202`,
+    orderProcessing: `http://${IP}:31203`,
+    inventoryManagement: `http://${IP}:31204`
   },
-  websocketUrl: 'ws://192.168.49.2:31200'
+  websocketUrl: `ws://${IP}:31200`
 };

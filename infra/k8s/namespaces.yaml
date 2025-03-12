@@ -25,4 +25,3 @@ metadata:
   name: store-otel
   labels:
     component: observability
-

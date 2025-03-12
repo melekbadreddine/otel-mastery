@@ -1,5 +1,4 @@
 version: '3.8'
-
 services:
   mongodb:
     image: mongo:5.0
@@ -9,6 +8,19 @@ services:
       - "27017:27017"
     volumes:
       - mongo-data:/data/db
+
+  postgres:
+    image: postgres:latest
+    pull_policy: if_not_present
+    container_name: postgres
+    environment:
+      - POSTGRES_DB=orderdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
       
   redis:
     image: redis:latest
@@ -20,7 +32,6 @@ services:
   zookeeper:
     image: bitnami/zookeeper:latest
     pull_policy: if_not_present
-    container_name: zookeeper
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
@@ -96,19 +107,6 @@ services:
     depends_on:
       - postgres
       - kafka
-
-  postgres:
-    image: postgres:latest
-    pull_policy: if_not_present
-    container_name: postgres
-    environment:
-      - POSTGRES_DB=orderdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
       
   store-ui:
     image: melekbadreddine/store:latest

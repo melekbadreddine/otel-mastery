@@ -6,7 +6,6 @@ export const environment = {
     orderProcessing: 'http://localhost:3003',
     inventoryManagement: 'http://localhost:3004'
   },
-  // WebSocket URL for real‑time updates:
   websocketUrl: 'ws://localhost:3001' 
 };
 

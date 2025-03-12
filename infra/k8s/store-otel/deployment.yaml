@@ -17,6 +17,7 @@ spec:
       containers:
       - name: otel-collector
         image: otel/opentelemetry-collector-contrib:0.96.0
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             cpu: 1000m

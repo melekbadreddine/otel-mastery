@@ -20,7 +20,7 @@ spec:
       containers:
       - name: store-ui
         image: melekbadreddine/store:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 4200
         env:

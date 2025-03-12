@@ -20,7 +20,7 @@ spec:
       containers:
       - name: order-processing
         image: melekbadreddine/orders:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 3003
         env:
@@ -48,6 +48,8 @@ spec:
           value: "true"
         - name: OTEL_LOGS_EXPORTER
           value: "otlp"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-Dotel.instrumentation.slf4j-mdc.enabled=true"
 ---
 apiVersion: v1
 kind: Service

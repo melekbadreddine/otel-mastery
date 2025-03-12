@@ -33,6 +33,15 @@ data:
                 - /tmp/hostpath-provisioner
 
     processors:
+      attributes/logs:
+        actions:
+          - action: insert
+            key: trace_id
+            from_attribute: trace_id
+          - action: insert
+            key: span_id
+            from_attribute: span_id
+
       attributes:
         actions:
           - action: insert
@@ -86,9 +95,9 @@ data:
           exporters: [prometheus]
         logs:
           receivers: [otlp, k8s_events]
-          processors: [memory_limiter, batch]
+          processors: [attributes/logs, k8sattributes, memory_limiter, batch]
           exporters: [loki]
         traces:
           receivers: [otlp]
-          processors: [memory_limiter, batch]
+          processors: [k8sattributes, memory_limiter, batch]
           exporters: [otlphttp]

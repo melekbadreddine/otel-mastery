@@ -19,5 +19,20 @@ export class InventoryService {
   getInventoryByProduct(productId: string): Observable<InventoryItem> {
     return this.http.get<InventoryItem>(`${this.baseUrl}/inventory/${productId}`);
   }
+
+  addInventory(item: InventoryItem): Observable<InventoryItem> {
+    return this.http.post<InventoryItem>(`${this.baseUrl}/inventory`, item);
+  }
+
+  updateInventory(item: InventoryItem): Observable<InventoryItem> {
+    if (!item.id) {
+      throw new Error("Inventory item ID is required");
+    }
+    return this.http.put<InventoryItem>(`${this.baseUrl}/inventory/${item.id}`, item);
+  }
+
+  deleteInventory(id: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/inventory/${id}`);
+  }
 }
 

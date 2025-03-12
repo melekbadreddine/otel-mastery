@@ -23,5 +23,20 @@ export class ProductService {
   getProductById(id: string): Observable<Product> {
     return this.http.get<Product>(`${this.baseUrl}/products/${id}`);
   }
+
+  addProduct(product: Product): Observable<Product> {
+    return this.http.post<Product>(`${this.baseUrl}/products`, product);
+  }
+
+  updateProduct(product: Product): Observable<Product> {
+    if (!product.id) {
+      throw new Error("Product ID is required");
+    }
+    return this.http.put<Product>(`${this.baseUrl}/products/${product.id}`, product);
+  }
+
+  deleteProduct(id: string): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/products/${id}`);
+  }
 }
 
