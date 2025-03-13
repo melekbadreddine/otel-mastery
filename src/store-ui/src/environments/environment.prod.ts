@@ -1,4 +1,4 @@
-const IP = '192.168.58.2';
+const IP = '192.168.49.2';
 
 export const environment = {
   production: true,
