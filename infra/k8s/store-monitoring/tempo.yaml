@@ -33,7 +33,6 @@ data:
         local_blocks: {} 
       storage:
         path: /data/tempo/metrics
-
 ---
 apiVersion: apps/v1
 kind: StatefulSet
