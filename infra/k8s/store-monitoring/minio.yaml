@@ -45,7 +45,7 @@ spec:
               key: rootpassword
         ports:
         - containerPort: 9000
-          name: api
+          name: s3
         - containerPort: 9001
           name: console
         volumeMounts:
@@ -54,7 +54,7 @@ spec:
         readinessProbe:
           httpGet:
             path: /minio/health/ready
-            port: api
+            port: s3
           initialDelaySeconds: 5
           periodSeconds: 10
         livenessProbe:
@@ -80,8 +80,8 @@ metadata:
 spec:
   ports:
   - port: 9000
-    targetPort: api
-    name: api
+    targetPort: s3
+    name: s3
   - port: 9001
     targetPort: console
     name: console
