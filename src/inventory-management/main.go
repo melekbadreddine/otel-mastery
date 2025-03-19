@@ -4,15 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 	"github.com/segmentio/kafka-go"
+
+	// Prometheus client for metrics.
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	// Logrus for structured logging.
+	"github.com/sirupsen/logrus"
 )
 
 // InventoryItem represents an inventory record.
@@ -39,7 +44,14 @@ type OrderItem struct {
 
 var db *sql.DB
 
+// Global logger instance using logrus.
+var logger = logrus.New()
+
 func main() {
+	// Configure logger.
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(logrus.InfoLevel)
+
 	// Load configuration from environment variables.
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -65,21 +77,21 @@ func main() {
 	for i := 0; i < maxRetries; i++ {
 		db, err = sql.Open("postgres", postgresURL)
 		if err != nil {
-			log.Printf("Attempt %d: Failed to open PostgreSQL connection: %v", i+1, err)
+			logger.Errorf("Attempt %d: Failed to open PostgreSQL connection: %v", i+1, err)
 			time.Sleep(5 * time.Second)
 			continue
 		}
 		err = db.Ping()
 		if err != nil {
-			log.Printf("Attempt %d: Failed to ping PostgreSQL: %v", i+1, err)
+			logger.Errorf("Attempt %d: Failed to ping PostgreSQL: %v", i+1, err)
 			time.Sleep(5 * time.Second)
 			continue
 		}
-		log.Printf("Connected to PostgreSQL on attempt %d", i+1)
+		logger.Infof("Connected to PostgreSQL on attempt %d", i+1)
 		break
 	}
 	if err != nil {
-		log.Fatalf("Failed to connect to PostgreSQL after %d attempts: %v", maxRetries, err)
+		logger.Fatalf("Failed to connect to PostgreSQL after %d attempts: %v", maxRetries, err)
 	}
 	defer db.Close()
 
@@ -93,35 +105,71 @@ func main() {
 	`
 	_, err = db.Exec(createTableQuery)
 	if err != nil {
-		log.Fatalf("Failed to create inventory table: %v", err)
+		logger.Fatalf("Failed to create inventory table: %v", err)
 	}
 
 	// Start Kafka consumer for order confirmation events.
 	go consumeOrderConfirmations(kafkaBrokers, kafkaTopic)
 
-	// Set up the Gin router.
+	// Set up Gin router.
 	router := gin.Default()
-	
+
 	// Configure CORS middleware.
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	router.Use(cors.New(config))
-	
-	// Set up the REST endpoints.
+
+	// Actuator endpoints.
+	router.GET("/actuator/health", healthCheck)
+	router.GET("/actuator/loggers", getLoggerLevels)
+	router.POST("/actuator/loggers", updateLoggerLevel)
+
+	// Expose Prometheus metrics.
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
+
+	// REST endpoints.
 	router.GET("/inventory", getInventory)
 	router.GET("/inventory/:productId", getInventoryByProduct)
 	router.POST("/inventory", createInventory)
 	router.PUT("/inventory/:productId", updateInventory)
 
-	log.Printf("Inventory Management service listening on port %s", port)
+	logger.Infof("Inventory Management service listening on port %s", port)
 	if err := router.Run(":" + port); err != nil {
-		log.Fatalf("Failed to run Gin server: %v", err)
+		logger.Fatalf("Failed to run Gin server: %v", err)
 	}
 }
 
-// getInventory returns all inventory items.
+// Actuator endpoint: health check.
+func healthCheck(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "UP"})
+}
+
+// Actuator endpoint: retrieve current logging level.
+func getLoggerLevels(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"level": logger.GetLevel().String()})
+}
+
+// Actuator endpoint: update the logging level at runtime.
+func updateLoggerLevel(c *gin.Context) {
+	var body struct {
+		Level string `json:"level"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	level, err := logrus.ParseLevel(body.Level)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid level"})
+		return
+	}
+	logger.SetLevel(level)
+	c.JSON(http.StatusOK, gin.H{"message": "Logger level updated", "level": level.String()})
+}
+
+// REST endpoint: get all inventory items.
 func getInventory(c *gin.Context) {
 	rows, err := db.Query("SELECT id, product_id, stock FROM inventory")
 	if err != nil {
@@ -142,7 +190,7 @@ func getInventory(c *gin.Context) {
 	c.JSON(http.StatusOK, items)
 }
 
-// getInventoryByProduct returns the inventory for a given product.
+// REST endpoint: get inventory by product ID.
 func getInventoryByProduct(c *gin.Context) {
 	productId := c.Param("productId")
 	var item InventoryItem
@@ -159,7 +207,7 @@ func getInventoryByProduct(c *gin.Context) {
 	c.JSON(http.StatusOK, item)
 }
 
-// createInventory creates a new inventory record.
+// REST endpoint: create a new inventory record.
 func createInventory(c *gin.Context) {
 	var item InventoryItem
 	if err := c.BindJSON(&item); err != nil {
@@ -179,7 +227,7 @@ func createInventory(c *gin.Context) {
 	c.JSON(http.StatusCreated, item)
 }
 
-// updateInventory updates the stock level for a given product.
+// REST endpoint: update inventory for a given product.
 func updateInventory(c *gin.Context) {
 	productId := c.Param("productId")
 	var payload struct {
@@ -216,11 +264,11 @@ func consumeOrderConfirmations(brokers, topic string) {
 	for {
 		m, err := r.ReadMessage(context.Background())
 		if err != nil {
-			log.Printf("Error reading message from Kafka: %v", err)
+			logger.Errorf("Error reading message from Kafka: %v", err)
 			time.Sleep(2 * time.Second)
 			continue
 		}
-		log.Printf("Received Kafka message at offset %d: %s", m.Offset, string(m.Value))
+		logger.Infof("Received Kafka message at offset %d: %s", m.Offset, string(m.Value))
 		processOrderConfirmation(m.Value)
 	}
 }
@@ -229,7 +277,7 @@ func consumeOrderConfirmations(brokers, topic string) {
 func processOrderConfirmation(message []byte) {
 	var event OrderConfirmation
 	if err := json.Unmarshal(message, &event); err != nil {
-		log.Printf("Error unmarshalling order confirmation: %v", err)
+		logger.Errorf("Error unmarshalling order confirmation: %v", err)
 		return
 	}
 	// For each item in the order, adjust the inventory.
@@ -242,23 +290,22 @@ func processOrderConfirmation(message []byte) {
 func adjustInventory(productId string, quantity int) {
 	res, err := db.Exec("UPDATE inventory SET stock = GREATEST(stock - $1, 0) WHERE product_id = $2", quantity, productId)
 	if err != nil {
-		log.Printf("Failed to adjust inventory for product %s: %v", productId, err)
+		logger.Errorf("Failed to adjust inventory for product %s: %v", productId, err)
 		return
 	}
 	count, err := res.RowsAffected()
 	if err != nil {
-		log.Printf("Error retrieving affected rows: %v", err)
+		logger.Errorf("Error retrieving affected rows: %v", err)
 		return
 	}
 	if count == 0 {
 		// Optionally, create a record if none exists.
-		log.Printf("No inventory record found for product %s. Creating a new record with stock 0.", productId)
+		logger.Infof("No inventory record found for product %s. Creating a new record with stock 0.", productId)
 		_, err = db.Exec("INSERT INTO inventory (product_id, stock) VALUES ($1, $2)", productId, 0)
 		if err != nil {
-			log.Printf("Failed to insert inventory record for product %s: %v", productId, err)
+			logger.Errorf("Failed to insert inventory record for product %s: %v", productId, err)
 		}
 	} else {
-		log.Printf("Adjusted inventory for product %s by reducing %d units", productId, quantity)
+		logger.Infof("Adjusted inventory for product %s by reducing %d units", productId, quantity)
 	}
 }
-

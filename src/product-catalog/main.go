@@ -4,11 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
-	
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	kafka "github.com/segmentio/kafka-go"
@@ -16,6 +15,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	mongoDriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	// Prometheus client for metrics.
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
+	// Logrus for structured logging.
+	"github.com/sirupsen/logrus"
 )
 
 // Product represents a product document in MongoDB.
@@ -38,9 +43,15 @@ var (
 	productCollection *mongoDriver.Collection
 	// Kafka writer for publishing events.
 	kafkaWriter *kafka.Writer
+	// Logger instance (using logrus).
+	logger = logrus.New()
 )
 
 func main() {
+	// Set up the logger.
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(logrus.InfoLevel)
+
 	// Read configuration from environment variables (with defaults).
 	mongoURI := getEnv("MONGO_URI", "mongodb://localhost:27017")
 	kafkaBroker := getEnv("KAFKA_BROKER", "localhost:9092")
@@ -49,12 +60,12 @@ func main() {
 	// Connect to MongoDB.
 	client, err := mongoDriver.Connect(context.Background(), options.Client().ApplyURI(mongoURI))
 	if err != nil {
-		log.Fatalf("MongoDB connection error: %v", err)
+		logger.Fatalf("MongoDB connection error: %v", err)
 	}
 	// Ensure disconnection when the service shuts down.
 	defer func() {
 		if err := client.Disconnect(context.Background()); err != nil {
-			log.Printf("MongoDB disconnect error: %v", err)
+			logger.Errorf("MongoDB disconnect error: %v", err)
 		}
 	}()
 	// Use database "catalog" and collection "products".
@@ -65,22 +76,29 @@ func main() {
 
 	// Initialize Kafka writer.
 	kafkaWriter = kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{kafkaBroker},
-		Topic:   "product-events",
-		// Optional: adjust other writer settings as needed.
+		Brokers:  []string{kafkaBroker},
+		Topic:    "product-events",
 		Balancer: &kafka.LeastBytes{},
 	})
 	defer kafkaWriter.Close()
 
 	// Set up Gin router.
 	router := gin.Default()
-	
-	// Configure CORS middleware
+
+	// Configure CORS middleware.
 	config := cors.DefaultConfig()
 	config.AllowOrigins = []string{"*"}
 	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"Origin", "Content-Type", "Accept", "Authorization"}
 	router.Use(cors.New(config))
+
+	// Actuator endpoints.
+	router.GET("/actuator/health", healthCheck)
+	router.GET("/actuator/loggers", getLoggerLevels)
+	router.POST("/actuator/loggers", updateLoggerLevel)
+
+	// Expose Prometheus metrics.
+	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 
 	// RESTful endpoints.
 	router.GET("/products", listProducts)
@@ -90,9 +108,9 @@ func main() {
 	router.DELETE("/products/:id", deleteProduct)
 	router.GET("/products/search", searchProducts)
 
-	log.Printf("Product Catalog service running on port %s...", port)
+	logger.Infof("Product Catalog service running on port %s...", port)
 	if err := router.Run(":" + port); err != nil {
-		log.Fatalf("Gin server error: %v", err)
+		logger.Fatalf("Gin server error: %v", err)
 	}
 }
 
@@ -117,9 +135,9 @@ func createTextIndex() {
 	}
 	_, err := productCollection.Indexes().CreateOne(ctx, indexModel)
 	if err != nil {
-		log.Printf("Could not create text index: %v", err)
+		logger.Errorf("Could not create text index: %v", err)
 	} else {
-		log.Println("Text index created or already exists on 'name' and 'description'")
+		logger.Info("Text index created or already exists on 'name' and 'description'")
 	}
 }
 
@@ -143,8 +161,36 @@ func publishEvent(eventType string, product Product) error {
 	if err != nil {
 		return fmt.Errorf("failed to write Kafka message: %v", err)
 	}
-	log.Printf("Published %s event for product %s", eventType, product.ID.Hex())
+	logger.Infof("Published %s event for product %s", eventType, product.ID.Hex())
 	return nil
+}
+
+// healthCheck returns a simple health status.
+func healthCheck(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "UP"})
+}
+
+// getLoggerLevels returns the current logging level.
+func getLoggerLevels(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"level": logger.GetLevel().String()})
+}
+
+// updateLoggerLevel allows changing the log level at runtime.
+func updateLoggerLevel(c *gin.Context) {
+	var body struct {
+		Level string `json:"level"`
+	}
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	level, err := logrus.ParseLevel(body.Level)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid level"})
+		return
+	}
+	logger.SetLevel(level)
+	c.JSON(http.StatusOK, gin.H{"message": "Logger level updated", "level": level.String()})
 }
 
 // listProducts returns all products.
@@ -212,7 +258,7 @@ func createProduct(c *gin.Context) {
 
 	// Publish create event.
 	if err := publishEvent("create", product); err != nil {
-		log.Printf("Kafka publish error: %v", err)
+		logger.Errorf("Kafka publish error: %v", err)
 	}
 
 	c.JSON(http.StatusCreated, product)
@@ -254,7 +300,7 @@ func updateProduct(c *gin.Context) {
 
 	// Publish update event.
 	if err := publishEvent("update", product); err != nil {
-		log.Printf("Kafka publish error: %v", err)
+		logger.Errorf("Kafka publish error: %v", err)
 	}
 
 	c.JSON(http.StatusOK, product)
@@ -289,7 +335,7 @@ func deleteProduct(c *gin.Context) {
 
 	// Publish delete event.
 	if err := publishEvent("delete", product); err != nil {
-		log.Printf("Kafka publish error: %v", err)
+		logger.Errorf("Kafka publish error: %v", err)
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Product deleted"})
@@ -323,4 +369,3 @@ func searchProducts(c *gin.Context) {
 
 	c.JSON(http.StatusOK, products)
 }
-

@@ -13,15 +13,6 @@ data:
       - job_name: 'otel-collector'
         static_configs:
           - targets: ['otel-collector.store-otel:8889']
-      - job_name: 'tempo-metrics'
-        static_configs:
-          - targets: ['tempo.store-monitoring:3200']
-      - job_name: 'prometheus'
-        static_configs:
-          - targets: ['localhost:9090']
-      - job_name: 'mimir'
-        static_configs:
-          - targets: ['mimir.store-monitoring:9009']
 
     remote_write:
       - url: "http://mimir.store-monitoring:9009/api/v1/push"
