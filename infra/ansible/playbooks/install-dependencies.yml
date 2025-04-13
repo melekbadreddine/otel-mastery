@@ -85,7 +85,7 @@
 
     - name: Install Angular CLI
       npm:
-        name: @angular/cli
+        name: '@angular/cli'
         global: yes
         state: present
       when: "'@angular/cli' not in angular_cli_check.stdout"
