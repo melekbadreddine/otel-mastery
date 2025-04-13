@@ -9,7 +9,23 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                checkout([$class: 'GitSCM', 
+                          branches: [[name: '*/master']],
+                          extensions: [],
+                          userRemoteConfigs: [[url: 'https://github.com/melekbadreddine/otel-mastery']]
+                        ])
+            }
+        }
+
+        stage('Setup Environment') {
+            steps {
+                sh '''
+                    echo "Installing required dependencies..."
+                    sudo apt-get update -qq
+                    sudo apt-get install -y python3-pip
+                    pip3 install ansible
+                    ansible-galaxy collection install community.docker
+                '''
             }
         }
 
@@ -18,7 +34,8 @@ pipeline {
                 dir(env.PLAYBOOKS_DIR) {
                     ansiblePlaybook(
                         playbook: 'install-dependencies.yml',
-                        inventory: '../hosts'
+                        inventory: '../hosts',
+                        extras: '-v'
                     )
                 }
             }
@@ -29,7 +46,8 @@ pipeline {
                 dir(env.PLAYBOOKS_DIR) {
                     ansiblePlaybook(
                         playbook: 'build.yml',
-                        inventory: '../hosts'
+                        inventory: '../hosts',
+                        extras: '--tags=build'
                     )
                 }
             }
@@ -44,6 +62,7 @@ pipeline {
                     ansiblePlaybook(
                         playbook: 'docker-images.yml',
                         inventory: '../hosts',
+                        extras: '--tags=build-push',
                         extraVars: [
                             dockerhub_pass: "${env.DOCKERHUB_CREDS_PSW}"
                         ]
@@ -56,6 +75,15 @@ pipeline {
     post {
         always {
             cleanWs()
+            script {
+                echo "Cleaning up workspace..."
+            }
+        }
+        success {
+            slackSend color: "good", message: "Build succeeded: ${env.JOB_NAME} ${env.BUILD_NUMBER}"
+        }
+        failure {
+            slackSend color: "danger", message: "Build failed: ${env.JOB_NAME} ${env.BUILD_NUMBER}"
         }
     }
 }
