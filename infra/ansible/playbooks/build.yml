@@ -1,0 +1,42 @@
+---
+- name: Build applications
+  hosts: build
+  vars:
+    src_dir: "../../../src"
+
+  tasks:
+    - name: Build Go applications
+      command: go build -v
+      loop:
+        - inventory-management
+        - product-catalog
+      args:
+        chdir: "{{ src_dir }}/{{ item }}"
+      environment:
+        PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin"
+
+    - name: Make mvnw executable
+      file:
+        path: "{{ src_dir }}/{{ item }}/mvnw"
+        mode: "0755"
+      loop:
+        - shopping-cart
+        - order-processing
+
+    - name: Build Spring Boot applications
+      command: ./mvnw clean package
+      loop:
+        - shopping-cart
+        - order-processing
+      args:
+        chdir: "{{ src_dir }}/{{ item }}"
+
+    - name: Install Angular dependencies
+      npm:
+        path: "{{ src_dir }}/store-ui"
+        state: present
+
+    - name: Build Angular application
+      command: npm run build -- --prod
+      args:
+        chdir: "{{ src_dir }}/store-ui"

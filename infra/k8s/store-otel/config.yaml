@@ -70,15 +70,21 @@ data:
 
     exporters:
       logging:
-        loglevel: debug
+        loglevel: info
       prometheus:
         endpoint: "0.0.0.0:8889"
-      loki:
-        endpoint: "http://loki.store-monitoring:3100/loki/api/v1/push"
-      otlphttp:
-        endpoint: "http://tempo.store-monitoring:4318"
+      prometheusremotewrite:
+        endpoint: "http://34.65.147.175/api/v1/push"
+        headers:
+          X-Scope-OrgID: "qim-info"
         tls:
           insecure: true
+      loki:
+        endpoint: "http://34.65.147.175/loki/api/v1/push" 
+      #otlphttp:
+      #  endpoint: "http://34.65.147.175/tempo"
+      #  tls:
+      #    insecure: true
 
     extensions:
       health_check:
@@ -90,12 +96,12 @@ data:
         metrics:
           receivers: [otlp, hostmetrics]
           processors: [k8sattributes, memory_limiter, batch]
-          exporters: [prometheus]
+          exporters: [prometheus, prometheusremotewrite]
         logs:
           receivers: [otlp, k8s_events]
           processors: [attributes/logs, k8sattributes, memory_limiter, batch]
           exporters: [loki]
-        traces:
-          receivers: [otlp]
-          processors: [k8sattributes, memory_limiter, batch]
-          exporters: [otlphttp]
+        #traces:
+        #  receivers: [otlp]
+        #  processors: [k8sattributes, memory_limiter, batch]
+        #  exporters: [otlphttp]

@@ -1,0 +1,32 @@
+---
+- name: Build and push Docker images
+  hosts: build
+  vars:
+    src_dir: "../../../src"
+    dockerhub_username: "melekbadreddine"
+    dockerhub_password: "{{ dockerhub_pass }}"
+    images:
+      - { app_dir: "inventory-management", image_name: "inventory" }
+      - { app_dir: "order-processing", image_name: "orders" }
+      - { app_dir: "shopping-cart", image_name: "cart" }
+      - { app_dir: "product-catalog", image_name: "products" }
+      - { app_dir: "store-ui", image_name: "store" }
+
+  tasks:
+    - name: Login to Docker Hub
+      community.docker.docker_login:
+        username: "{{ dockerhub_username }}"
+        password: "{{ dockerhub_password }}"
+        email: " "
+      tags: docker-login
+
+    - name: Build and push Docker images
+      community.docker.docker_image:
+        path: "{{ src_dir }}/{{ item.app_dir }}"
+        name: "{{ dockerhub_username }}/{{ item.image_name }}:latest"
+        push: yes
+        source: build
+        build:
+          pull: yes
+      loop: "{{ images }}"
+      tags: build-push

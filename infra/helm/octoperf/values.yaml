@@ -1,0 +1,131 @@
+---
+
+# Provided by OctoPerf UI when creating
+# an on-premise agent (AGENT_TOKEN env)
+# See: https://doc.octoperf.com/private-hosts/agents/
+token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJvY3RvcGVyZiIsImlhdCI6MTc0NDQ1OTE5MywiaW5mbyI6IntcImRvY2tlckltYWdlXCI6XCJvY3RvcGVyZi9kb2NrZXItYWdlbnQ6MTUuMi40XCIsXCJpZFwiOlwiXCIsXCJuYW1lXCI6XCJhenVyZV9iZXJuZWljZV90dXJuZXJcIixcInByb3ZpZGVySWRcIjpcIllFa3FINVlCZ3dQVVBnWjRidHhEXCIsXCJyZWdpb25cIjpcImRlZmF1bHRcIixcInR5cGVcIjpcIk1BTlVBTFwiLFwiem9uZVwiOlwiZGVmYXVsdFwifSJ9.x_cWTqyOPLBwAQu4cjiQuRje25MJHJhhlUklpaGuG8Y"
+
+# OctoPerf Server URL
+serverUrl: "https://api.octoperf.com:443"
+
+# Deploy one agent per node to use as load-generator
+replicas: 1
+
+## OctoPerf Kubernetes Agent Image
+## ref: https://hub.docker.com/r/octoperf/kubernetes-agent
+image:
+  registry: docker.io
+  repository: octoperf/kubernetes-agent
+  tag: 15.2.4
+  ## Specify a imagePullPolicy
+  ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+  ## ref: https://kubernetes.io/docs/user-guide/images/#pre-pulling-images
+  ##
+  pullPolicy: IfNotPresent
+  ## Optionally specify an array of imagePullSecrets (secrets must be manually created in the namespace)
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+  ## Example:
+  ## pullSecrets:
+  ##   - myRegistryKeySecretName
+  ##
+  pullSecrets: []
+  ## Set to true if you would like to see extra information on logs
+  ##
+  debug: false
+
+extraInitContainers: []
+  
+## Node selector
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector: {}
+
+## Affinity
+## ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+## Tolerations for pod assignment
+## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+##
+tolerations: []
+
+# See https://kubernetes.io/docs/concepts/scheduling-eviction/topology-spread-constraints/
+# Have only one agent per node
+topologySpreadConstraints: []
+#  - maxSkew: 1
+#    topologyKey: kubernetes.io/hostname
+#    whenUnsatisfiable: DoNotSchedule
+#    labelSelector:
+#      matchLabels:
+#        name: octoperf-kubernetes-agent
+
+## Security context
+securityContext: {}
+#  enabled: false
+#  runAsUser: 9001
+#  fsGroup: 9001
+
+
+## Configure resource requests and limits
+## ref: http://kubernetes.io/docs/user-guide/compute-resources/
+##
+resources:
+  requests:
+    memory: 1Gi
+    cpu: 500m
+
+## @param extraEnvVars Extra environment variables to be set on agent container
+## E.g.
+## extraEnvVars:
+##   - name: SERVER_PRIVATEROOTCERTIFICATE
+##     value: "false"
+##
+extraEnvVars: []
+
+volumeMounts: []
+
+## @section RBAC parameters
+
+## pods ServiceAccount
+## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/
+##
+serviceAccount:
+  ## @param serviceAccount.create Enable the creation of a ServiceAccount for MySQL pods
+  ##
+  create: true
+  ## @param serviceAccount.name Name of the created ServiceAccount
+  ## If not set and create is true, a name is generated using the mysql.fullname template
+  ##
+  name: "kubernetes-agent"
+  ## @param serviceAccount.annotations Annotations for MySQL Service Account
+  ##
+  annotations: {}
+  ## @param serviceAccount.automountServiceAccountToken Automount service account token for the server service account
+  ##
+  automountServiceAccountToken: true
+
+## Role Based Access
+## ref: https://kubernetes.io/docs/admin/authorization/rbac/
+##
+rbac:
+  ## @param rbac.create Whether to create & use RBAC resources or not
+  ##
+  create: true
+  ## @param rbac.rules Custom RBAC rules to set
+  ## e.g:
+  ## rules:
+  ##   - apiGroups:
+  ##       - ""
+  ##     resources:
+  ##       - pods
+  ##     verbs:
+  ##       - get
+  ##       - list
+  ##
+  rules: []
+
+## Init container resources defaults
+initContainer:
+  resources:
+    requests:
+      memory: 10Mi
+      cpu: 10m

@@ -4,12 +4,15 @@ metadata:
   name: otel-collector
   namespace: store-otel
 spec:
+  type: NodePort
   ports:
   - name: otlp-http
     port: 4318
     targetPort: 4318
+    nodePort: 30418
   - name: prometheus
     port: 8889
     targetPort: 8889
+    nodePort: 30889
   selector:
     app: otel-collector
