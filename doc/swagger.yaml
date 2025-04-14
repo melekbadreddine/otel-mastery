@@ -1,0 +1,790 @@
+openapi: 3.0.0
+info:
+  title: E-commerce Microservices API
+  description: |
+    API documentation for the e-commerce microservices system including:
+    - Inventory Management
+    - Product Catalog
+    - Order Processing
+    - Shopping Cart
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+# Variables for server URLs
+servers:
+  - url: '{protocol}://{hostname}:{port}'
+    description: API server
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+      hostname:
+        default: localhost
+      port:
+        default: '80'
+
+tags:
+  - name: Inventory
+    description: Inventory management operations
+  - name: Products
+    description: Product catalog operations
+  - name: Orders
+    description: Order processing operations
+  - name: Cart
+    description: Shopping cart operations
+  - name: Monitoring
+    description: Service monitoring and health check endpoints
+
+paths:
+  # Inventory Management Service
+  /inventory:
+    get:
+      tags:
+        - Inventory
+      summary: Get all inventory items
+      description: Returns a list of all items in inventory
+      operationId: getInventory
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Inventory
+      summary: Create new inventory record
+      description: Add a new product to inventory
+      operationId: createInventory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        '201':
+          description: Inventory item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /inventory/{productId}:
+    get:
+      tags:
+        - Inventory
+      summary: Get inventory for a specific product
+      description: Returns inventory information for a specific product ID
+      operationId: getInventoryByProduct
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of product to retrieve
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InventoryItem'
+        '404':
+          description: Inventory item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Inventory
+      summary: Update inventory for a product
+      description: Update stock levels for a specific product
+      operationId: updateInventory
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of product to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                stock:
+                  type: integer
+                  description: New stock level
+              required:
+                - stock
+      responses:
+        '200':
+          description: Inventory updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Inventory updated
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Inventory item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Product Catalog Service
+  /products:
+    get:
+      tags:
+        - Products
+      summary: List all products
+      description: Returns a list of all products in the catalog
+      operationId: listProducts
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - Products
+      summary: Create a new product
+      description: Add a new product to the catalog
+      operationId: createProduct
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /products/{id}:
+    get:
+      tags:
+        - Products
+      summary: Get product by ID
+      description: Returns a single product by its ID
+      operationId: getProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of product to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid product ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      tags:
+        - Products
+      summary: Update a product
+      description: Update an existing product in the catalog
+      operationId: updateProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of product to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Product updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Invalid product ID or request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      tags:
+        - Products
+      summary: Delete a product
+      description: Remove a product from the catalog
+      operationId: deleteProduct
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of product to delete
+      responses:
+        '200':
+          description: Product deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Product deleted
+        '400':
+          description: Invalid product ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /products/search:
+    get:
+      tags:
+        - Products
+      summary: Search products
+      description: Search for products using MongoDB text search
+      operationId: searchProducts
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Search query string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '400':
+          description: Query parameter is required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Order Processing Service
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get order by ID
+      description: Returns a single order by its ID
+      operationId: getOrder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+          description: ID of order to return
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /orders/orderNumber/{orderNumber}:
+    get:
+      tags:
+        - Orders
+      summary: Get order by order number
+      description: Returns a single order by its order number
+      operationId: getOrderByOrderNumber
+      parameters:
+        - name: orderNumber
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Order number to look up
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Order not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  # Shopping Cart Service
+  /cart:
+    get:
+      tags:
+        - Cart
+      summary: Get the current cart
+      description: Returns the current shopping cart with all items
+      operationId: getCart
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart/items:
+    post:
+      tags:
+        - Cart
+      summary: Add item to cart
+      description: Add a new item to the shopping cart
+      operationId: addItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+      responses:
+        '200':
+          description: Item added to cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    put:
+      tags:
+        - Cart
+      summary: Update cart item
+      description: Update an existing item in the shopping cart (e.g., change quantity)
+      operationId: updateItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+      responses:
+        '200':
+          description: Cart item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart/items/{productId}:
+    delete:
+      tags:
+        - Cart
+      summary: Remove item from cart
+      description: Remove an item from the shopping cart
+      operationId: removeItem
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: ID of product to remove from cart
+      responses:
+        '200':
+          description: Item removed from cart
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+
+  /cart/checkout:
+    post:
+      tags:
+        - Cart
+      summary: Checkout cart
+      description: Initiate the checkout process for the current cart
+      operationId: checkout
+      responses:
+        '200':
+          description: Checkout initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Checkout initiated
+
+  # Monitoring Endpoints
+  /actuator/health:
+    get:
+      tags:
+        - Monitoring
+      summary: Health check endpoint
+      description: Returns the health status of the service
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: UP
+
+  /actuator/loggers:
+    get:
+      tags:
+        - Monitoring
+      summary: Get logger levels
+      description: Returns the current logging level
+      operationId: getLoggerLevels
+      responses:
+        '200':
+          description: Current logger level
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  level:
+                    type: string
+                    example: info
+    post:
+      tags:
+        - Monitoring
+      summary: Update logger level
+      description: Update the logging level at runtime
+      operationId: updateLoggerLevel
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                level:
+                  type: string
+                  description: New log level
+                  example: debug
+              required:
+                - level
+      responses:
+        '200':
+          description: Logger level updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Logger level updated
+                  level:
+                    type: string
+                    example: debug
+        '400':
+          description: Invalid level
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /metrics:
+    get:
+      tags:
+        - Monitoring
+      summary: Prometheus metrics endpoint
+      description: Exposes metrics in Prometheus format
+      operationId: metrics
+      responses:
+        '200':
+          description: Metrics in Prometheus format
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+      required:
+        - error
+
+    InventoryItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the inventory item
+        productId:
+          type: string
+          description: Product ID reference
+        stock:
+          type: integer
+          description: Current stock level
+      required:
+        - productId
+        - stock
+
+    ProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the product
+        description:
+          type: string
+          description: Description of the product
+        price:
+          type: number
+          format: float
+          description: Price of the product
+        image_url:
+          type: string
+          description: URL to product image
+      required:
+        - name
+        - price
+
+    Product:
+      allOf:
+        - $ref: '#/components/schemas/ProductInput'
+        - type: object
+          properties:
+            _id:
+              type: string
+              description: MongoDB ObjectID of the product
+
+    OrderItem:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: ID of the product
+        quantity:
+          type: integer
+          description: Quantity of the product
+        price:
+          type: number
+          format: float
+          description: Price of the product at time of order
+      required:
+        - productId
+        - quantity
+        - price
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier for the order
+        orderNumber:
+          type: string
+          description: Human-readable order reference number
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        totalAmount:
+          type: number
+          format: float
+          description: Total order amount
+        orderStatus:
+          type: string
+          description: Current status of the order
+        paymentStatus:
+          type: string
+          description: Status of payment for the order
+        orderDate:
+          type: string
+          format: date-time
+          description: Date and time when the order was placed
+        customerId:
+          type: string
+          description: ID of the customer who placed the order
+      required:
+        - orderNumber
+        - items
+        - totalAmount
+        - orderStatus
+        - paymentStatus
+        - orderDate
+
+    CartItem:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: ID of the product
+        quantity:
+          type: integer
+          description: Quantity of the product
+        price:
+          type: number
+          format: float
+          description: Price of the product
+        name:
+          type: string
+          description: Name of the product
+      required:
+        - productId
+        - quantity
+
+    Cart:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the cart
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+        totalItems:
+          type: integer
+          description: Total number of items in the cart
+        totalPrice:
+          type: number
+          format: float
+          description: Total price of all items in the cart
