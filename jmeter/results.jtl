@@ -1,0 +1,91 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1744721482876,33,Search for chair,200,OK,Product Search 1-1,text,true,,329,145,1,3,http://127.0.0.1:39447/products/search?query=chair,33,0,25
+1744721482932,2,Search for table,200,OK,Product Search 1-2,text,true,,361,145,1,3,http://127.0.0.1:39447/products/search?query=table,2,0,0
+1744721483132,3,Search for sofa,200,OK,Product Search 1-3,text,true,,329,144,1,5,http://127.0.0.1:39447/products/search?query=sofa,3,0,1
+1744721483331,2,Search for clock,200,OK,Product Search 1-4,text,true,,411,145,1,7,http://127.0.0.1:39447/products/search?query=clock,2,0,0
+1744721483381,62,Add Product 67f7b07344155f01e3cc5a8a to Cart,200,,Cart Operations 2-2,text,true,,327,245,4,8,http://127.0.0.1:33777/cart/items,10,0,3
+1744721483381,62,Add Product 67f7b07344155f01e3cc5a88 to Cart,200,,Cart Operations 2-3,text,true,,327,245,4,8,http://127.0.0.1:33777/cart/items,10,0,3
+1744721483381,62,Add Product 67f7b07344155f01e3cc5a8a to Cart,200,,Cart Operations 2-4,text,true,,327,245,4,8,http://127.0.0.1:33777/cart/items,10,0,3
+1744721483381,62,Add Product 67f7b07344155f01e3cc5a89 to Cart,200,,Cart Operations 2-1,text,true,,327,245,4,8,http://127.0.0.1:33777/cart/items,10,0,3
+1744721483446,57,View Cart,200,,Cart Operations 2-1,text,true,,327,154,4,8,http://127.0.0.1:33777/cart,3,0,0
+1744721483446,57,View Cart,200,,Cart Operations 2-2,text,true,,327,154,4,8,http://127.0.0.1:33777/cart,3,0,0
+1744721483446,57,View Cart,200,,Cart Operations 2-3,text,true,,327,154,4,8,http://127.0.0.1:33777/cart,3,0,0
+1744721483446,57,View Cart,200,,Cart Operations 2-4,text,true,,327,154,4,8,http://127.0.0.1:33777/cart,3,0,0
+1744721483505,4,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-4,text,true,,381,244,4,8,http://127.0.0.1:33777/cart/items,4,0,0
+1744721483505,4,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-3,text,true,,327,244,4,8,http://127.0.0.1:33777/cart/items,4,0,0
+1744721483505,4,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-1,text,true,,381,244,4,8,http://127.0.0.1:33777/cart/items,4,0,0
+1744721483505,4,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-2,text,true,,381,244,4,8,http://127.0.0.1:33777/cart/items,4,0,0
+1744721483511,4,Remove Product 67f7b07344155f01e3cc5a8a from Cart,200,,Cart Operations 2-2,text,true,,327,207,4,8,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a8a,4,0,0
+1744721483511,4,Remove Product 67f7b07344155f01e3cc5a88 from Cart,200,,Cart Operations 2-3,text,true,,327,207,4,8,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a88,4,0,0
+1744721483511,4,Remove Product 67f7b07344155f01e3cc5a8a from Cart,200,,Cart Operations 2-4,text,true,,327,207,4,8,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a8a,4,0,0
+1744721483511,5,Remove Product 67f7b07344155f01e3cc5a89 from Cart,200,,Cart Operations 2-1,text,true,,381,207,1,5,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a89,4,0,0
+1744721483530,4,Search for elegant,200,OK,Product Search 1-5,text,true,,361,147,1,5,http://127.0.0.1:39447/products/search?query=elegant,4,0,1
+1744721483539,54,Add Product 67f7b07344155f01e3cc5a88 to Cart,200,,Cart Operations 2-5,text,true,,381,245,1,6,http://127.0.0.1:33777/cart/items,4,0,0
+1744721483595,48,View Cart,200,,Cart Operations 2-5,text,true,,381,154,1,6,http://127.0.0.1:33777/cart,2,0,0
+1744721483645,58,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-5,text,true,,381,244,1,6,http://127.0.0.1:33777/cart/items,3,0,0
+1744721483730,2,Search for cozy,200,OK,Product Search 1-6,text,true,,329,144,1,7,http://127.0.0.1:39447/products/search?query=cozy,2,0,1
+1744721483705,34,Remove Product 67f7b07344155f01e3cc5a88 from Cart,200,,Cart Operations 2-5,text,true,,327,207,2,7,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a88,3,0,0
+1744721483738,45,Add Product 67f7b07344155f01e3cc5a8a to Cart,200,,Cart Operations 2-6,text,true,,327,245,1,7,http://127.0.0.1:33777/cart/items,4,0,0
+1744721483785,48,View Cart,200,,Cart Operations 2-6,text,true,,327,154,1,7,http://127.0.0.1:33777/cart,2,0,0
+1744721483835,48,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-6,text,true,,327,244,1,7,http://127.0.0.1:33777/cart/items,3,0,0
+1744721483929,2,Search for stylish,200,OK,Product Search 1-7,text,true,,329,147,1,8,http://127.0.0.1:39447/products/search?query=stylish,2,0,1
+1744721483885,58,Remove Product 67f7b07344155f01e3cc5a8a from Cart,200,,Cart Operations 2-6,text,true,,273,207,2,8,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a8a,3,0,0
+1744721483942,61,Add Product 67f7b07344155f01e3cc5a88 to Cart,200,,Cart Operations 2-7,text,true,,327,245,1,8,http://127.0.0.1:33777/cart/items,4,0,0
+1744721484005,58,View Cart,200,,Cart Operations 2-7,text,true,,327,154,1,8,http://127.0.0.1:33777/cart,2,0,0
+1744721484064,49,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-7,text,true,,327,244,1,8,http://127.0.0.1:33777/cart/items,3,0,0
+1744721484128,3,Search for artistic,200,OK,Product Search 1-8,text,true,,411,148,1,9,http://127.0.0.1:39447/products/search?query=artistic,3,0,1
+1744721484115,24,Remove Product 67f7b07344155f01e3cc5a88 from Cart,200,,Cart Operations 2-7,text,true,,273,207,2,9,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a88,3,0,0
+1744721484138,45,Add Product 67f7b07344155f01e3cc5a8a to Cart,200,,Cart Operations 2-8,text,true,,327,245,1,9,http://127.0.0.1:33777/cart/items,4,0,1
+1744721484185,58,View Cart,200,,Cart Operations 2-8,text,true,,327,154,1,9,http://127.0.0.1:33777/cart,2,0,0
+1744721484245,48,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-8,text,true,,327,244,1,9,http://127.0.0.1:33777/cart/items,3,0,0
+1744721484326,3,Search for modern,200,OK,Product Search 1-9,text,true,,329,146,1,10,http://127.0.0.1:39447/products/search?query=modern,3,0,1
+1744721484294,45,Remove Product 67f7b07344155f01e3cc5a8a from Cart,200,,Cart Operations 2-8,text,true,,273,207,2,10,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a8a,4,0,0
+1744721484338,30,Add Product 67f7b07344155f01e3cc5a88 to Cart,200,,Cart Operations 2-9,text,true,,327,245,1,10,http://127.0.0.1:33777/cart/items,4,0,1
+1744721484367,5,Add Product 67f7b07344155f01e3cc5a89 to Cart,200,,Checkout Process 3-3,text,true,,381,245,9,10,http://127.0.0.1:33777/cart/items,5,0,1
+1744721484367,5,Add Product 67f7b07344155f01e3cc5a8b to Cart,200,,Checkout Process 3-4,text,true,,381,245,9,10,http://127.0.0.1:33777/cart/items,5,0,1
+1744721484368,4,Add Product 67f7b07344155f01e3cc5a88 to Cart,200,,Checkout Process 3-1,text,true,,327,245,9,10,http://127.0.0.1:33777/cart/items,4,0,0
+1744721484367,5,Add Product 67f7b07344155f01e3cc5a8b to Cart,200,,Checkout Process 3-2,text,true,,381,245,9,10,http://127.0.0.1:33777/cart/items,5,0,1
+1744721484369,3,View Cart,200,,Cart Operations 2-9,text,true,,381,154,1,10,http://127.0.0.1:33777/cart,3,0,0
+1744721484373,60,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-9,text,true,,381,244,1,10,http://127.0.0.1:33777/cart/items,3,0,0
+1744721484435,48,Remove Product 67f7b07344155f01e3cc5a88 from Cart,200,,Cart Operations 2-9,text,true,,327,207,1,10,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a88,3,0,0
+1744721484526,2,Search for chair,200,OK,Product Search 1-10,text,true,,329,145,1,10,http://127.0.0.1:39447/products/search?query=chair,2,0,0
+1744721484543,6,Add Product 67f7b07344155f01e3cc5a8a to Cart,200,,Cart Operations 2-10,text,true,,381,245,1,11,http://127.0.0.1:33777/cart/items,4,0,1
+1744721484550,43,View Cart,200,,Cart Operations 2-10,text,true,,381,154,1,11,http://127.0.0.1:33777/cart,2,0,0
+1744721484548,45,Add Product 67f7b07344155f01e3cc5a89 to Cart,200,,Checkout Process 3-5,text,true,,435,245,10,11,http://127.0.0.1:33777/cart/items,45,0,1
+1744721484594,49,Update Product ${updateProductId} Quantity,200,,Cart Operations 2-10,text,true,,435,244,1,11,http://127.0.0.1:33777/cart/items,3,0,0
+1744721484644,49,Remove Product 67f7b07344155f01e3cc5a8a from Cart,200,,Cart Operations 2-10,text,true,,381,207,1,11,http://127.0.0.1:33777/cart/items/67f7b07344155f01e3cc5a8a,3,0,0
+1744721484749,54,Add Product 67f7b07344155f01e3cc5a8b to Cart,200,,Checkout Process 3-6,text,true,,381,245,10,10,http://127.0.0.1:33777/cart/items,3,0,0
+1744721484949,44,Add Product 67f7b07344155f01e3cc5a89 to Cart,200,,Checkout Process 3-7,text,true,,381,245,10,10,http://127.0.0.1:33777/cart/items,3,0,1
+1744721485149,4,Add Product 67f7b07344155f01e3cc5a8b to Cart,200,,Checkout Process 3-8,text,true,,381,245,10,10,http://127.0.0.1:33777/cart/items,4,0,0
+1744721485348,4,Add Product 67f7b07344155f01e3cc5a89 to Cart,200,,Checkout Process 3-9,text,true,,381,245,10,10,http://127.0.0.1:33777/cart/items,4,0,1
+1744721485373,3,View Cart,200,,Checkout Process 3-3,text,true,,381,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721485373,60,View Cart,200,,Checkout Process 3-4,text,true,,381,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721485373,60,View Cart,200,,Checkout Process 3-2,text,true,,381,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721485373,60,View Cart,200,,Checkout Process 3-1,text,true,,381,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721485548,4,Add Product 67f7b07344155f01e3cc5a8b to Cart,200,,Checkout Process 3-10,text,true,,382,245,10,10,http://127.0.0.1:33777/cart/items,4,0,0
+1744721485594,3,View Cart,200,,Checkout Process 3-5,text,true,,382,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721485805,2,View Cart,200,,Checkout Process 3-6,text,true,,382,154,10,10,http://127.0.0.1:33777/cart,2,0,0
+1744721485994,3,View Cart,200,,Checkout Process 3-7,text,true,,382,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721486154,3,View Cart,200,,Checkout Process 3-8,text,true,,382,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721486354,3,View Cart,200,,Checkout Process 3-9,text,true,,382,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721486378,4,Checkout Cart,200,,Checkout Process 3-3,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,4,0,0
+1744721486434,3,Checkout Cart,200,,Checkout Process 3-1,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721486434,3,Checkout Cart,200,,Checkout Process 3-4,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721486434,3,Checkout Cart,200,,Checkout Process 3-2,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721486553,3,View Cart,200,,Checkout Process 3-10,text,true,,273,154,10,10,http://127.0.0.1:33777/cart,3,0,0
+1744721486598,3,Checkout Cart,200,,Checkout Process 3-5,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721486809,3,Checkout Cart,200,,Checkout Process 3-6,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721486998,3,Checkout Cart,200,,Checkout Process 3-7,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721487158,3,Checkout Cart,200,,Checkout Process 3-8,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721487358,3,Checkout Cart,200,,Checkout Process 3-9,text,true,,269,183,10,10,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721487384,56,View Order Details,200,,Checkout Process 3-3,text,true,,484,158,10,10,http://127.0.0.1:33655/orders/1,9,0,0
+1744721487439,64,View Order Details,200,,Checkout Process 3-1,text,true,,484,158,9,9,http://127.0.0.1:33655/orders/1,7,0,0
+1744721487439,64,View Order Details,200,,Checkout Process 3-2,text,true,,484,158,9,9,http://127.0.0.1:33655/orders/1,7,0,0
+1744721487439,64,View Order Details,200,,Checkout Process 3-4,text,true,,484,158,9,9,http://127.0.0.1:33655/orders/1,64,0,0
+1744721487557,3,Checkout Cart,200,,Checkout Process 3-10,text,true,,269,183,6,6,http://127.0.0.1:33777/cart/checkout,3,0,0
+1744721487603,50,View Order Details,200,,Checkout Process 3-5,text,true,,484,158,6,6,http://127.0.0.1:33655/orders/1,7,0,0
+1744721487814,49,View Order Details,200,,Checkout Process 3-6,text,true,,484,158,5,5,http://127.0.0.1:33655/orders/1,8,0,1
+1744721488003,50,View Order Details,200,,Checkout Process 3-7,text,true,,484,158,4,4,http://127.0.0.1:33655/orders/1,7,0,1
+1744721488163,50,View Order Details,200,,Checkout Process 3-8,text,true,,484,158,3,3,http://127.0.0.1:33655/orders/1,7,0,0
+1744721488363,60,View Order Details,200,,Checkout Process 3-9,text,true,,484,158,2,2,http://127.0.0.1:33655/orders/1,6,0,0
+1744721488562,51,View Order Details,200,,Checkout Process 3-10,text,true,,484,158,1,1,http://127.0.0.1:33655/orders/1,6,0,0
