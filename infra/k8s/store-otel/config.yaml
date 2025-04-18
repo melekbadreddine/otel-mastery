@@ -74,9 +74,9 @@ data:
       prometheus:
         endpoint: "0.0.0.0:8889"
       loki:
-        endpoint: "http://34.65.152.196/loki/loki/api/v1/push" 
+        endpoint: "http://34.65.171.80/loki/loki/api/v1/push" 
       otlphttp:
-        endpoint: "http://34.65.152.196/tempo"
+        endpoint: "http://34.65.171.80/tempo"
         tls:
           insecure: true
 
