@@ -15,16 +15,8 @@
       environment:
         PATH: "{{ ansible_env.PATH }}:/usr/local/go/bin"
 
-    - name: Make mvnw executable
-      file:
-        path: "{{ src_dir }}/{{ item }}/mvnw"
-        mode: "0755"
-      loop:
-        - shopping-cart
-        - order-processing
-
     - name: Build Spring Boot applications
-      command: ./mvnw clean package
+      command: mvn clean package
       loop:
         - shopping-cart
         - order-processing
@@ -37,6 +29,6 @@
         state: present
 
     - name: Build Angular application
-      command: npm run build -- --prod
+      command: npm run build
       args:
         chdir: "{{ src_dir }}/store-ui"

@@ -1,72 +1,38 @@
 pipeline {
     agent any
-
     environment {
-        ANSIBLE_CONFIG = 'infra/ansible/ansible.cfg'
-        PLAYBOOKS_DIR = 'infra/ansible/playbooks'
+        ANSIBLE_CONFIG = "${WORKSPACE}/infra/ansible/ansible.cfg"
     }
-
     stages {
         stage('Checkout') {
+            steps { checkout scm }
+        }
+        stage('Build') {
             steps {
-                checkout scm
+                ansiblePlaybook(playbook: 'infra/ansible/playbooks/build.yml',
+                                inventory: 'infra/ansible/hosts',
+                                credentialsId: 'VAULT_PASSWORD_FILE')
             }
         }
-
-        stage('Setup Ansible') {
+        stage('Docker') {
             steps {
-                sh '''
-                    echo "Installing Ansible dependencies..."
-                    pip3 install --user ansible
-                    ansible-galaxy collection install community.docker
-                '''
+                ansiblePlaybook(
+                  playbook: 'infra/ansible/playbooks/docker.yml',
+                  inventory: 'infra/ansible/hosts',
+                  credentialsId: 'VAULT_PASSWORD_FILE'
+                )
             }
         }
-
-        stage('Install Dependencies') {
+        stage('Security Scan') {
             steps {
-                dir(env.PLAYBOOKS_DIR) {
-                    ansiblePlaybook(
-                        playbook: 'install-dependencies.yml',
-                        inventory: '../hosts',
-                        extras: '-v'
-                    )
-                }
-            }
-        }
-
-        stage('Build Applications') {
-            steps {
-                dir(env.PLAYBOOKS_DIR) {
-                    ansiblePlaybook(
-                        playbook: 'build.yml',
-                        inventory: '../hosts'
-                    )
-                }
-            }
-        }
-
-        stage('Build & Push Docker Images') {
-            environment {
-                DOCKERHUB_CREDS = credentials('dockerhub-creds')
-            }
-            steps {
-                dir(env.PLAYBOOKS_DIR) {
-                    ansiblePlaybook(
-                        playbook: 'docker-images.yml',
-                        inventory: '../hosts',
-                        extraVars: [
-                            dockerhub_pass: "${env.DOCKERHUB_CREDS_PSW}"
-                        ]
-                    )
-                }
+                ansiblePlaybook(playbook: 'infra/ansible/playbooks/trivy.yml',
+                                inventory: 'infra/ansible/hosts',
+                                credentialsId: 'VAULT_PASSWORD_FILE')
             }
         }
     }
-
     post {
-        always {
-            cleanWs()
-        }
+        success { echo 'CI/CD pipeline completed successfully.' }
+        failure { echo 'CI/CD pipeline failed.' }
     }
 }

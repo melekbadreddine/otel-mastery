@@ -1,0 +1,33 @@
+---
+- name: Perform security scans
+  hosts: build
+  vars:
+    project_root: "../../../"
+    scan_reports_dir: "../../../docs/trivy"
+    images_to_scan:
+      - melekbadreddine/products:latest
+      - melekbadreddine/orders:latest
+      - melekbadreddine/cart:latest
+      - melekbadreddine/inventory:latest
+
+  tasks:
+    - name: Scan project filesystem for vulnerabilities
+      ansible.builtin.command:
+        cmd: >-
+          trivy filesystem --format table
+          --output "{{ scan_reports_dir }}/trivyfs.txt"
+          "{{ project_root }}"
+      changed_when: false
+      register: fs_scan
+      ignore_errors: True
+
+    - name: Scan Docker images
+      ansible.builtin.command:
+        cmd: >-
+          trivy image --format table
+          --output "{{ scan_reports_dir }}/images/{{ item.split('/')[-1] | replace(':', '-') }}.txt"
+          "{{ item }}"
+      loop: "{{ images_to_scan }}"
+      changed_when: false
+      register: image_scans
+      ignore_errors: True

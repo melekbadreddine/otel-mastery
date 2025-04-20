@@ -1,0 +1,227 @@
+
+Report Summary
+
+┌─────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
+│                   Target                    │  Type  │ Vulnerabilities │ Secrets │
+├─────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+│ melekbadreddine/cart:latest (alpine 3.21.2) │ alpine │       11        │    -    │
+├─────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+│ app/shopping-cart-0.0.1-SNAPSHOT.jar        │  jar   │       44        │    -    │
+└─────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+melekbadreddine/cart:latest (alpine 3.21.2)
+===========================================
+Total: 11 (UNKNOWN: 2, LOW: 0, MEDIUM: 5, HIGH: 4, CRITICAL: 0)
+
+┌─────────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬─────────────────────────────────────────────────────────────┐
+│   Library   │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                            │
+├─────────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ libcrypto3  │ CVE-2024-12797 │ HIGH     │ fixed  │ 3.3.2-r4          │ 3.3.3-r0      │ openssl: RFC7250 handshakes with unauthenticated servers    │
+│             │                │          │        │                   │               │ don't abort as expected                                     │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-12797                  │
+│             ├────────────────┼──────────┤        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│             │ CVE-2024-13176 │ MEDIUM   │        │                   │ 3.3.2-r5      │ openssl: Timing side-channel in ECDSA signature computation │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-13176                  │
+├─────────────┼────────────────┼──────────┤        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ libexpat    │ CVE-2024-8176  │ HIGH     │        │ 2.6.4-r0          │ 2.7.0-r0      │ libexpat: expat: Improper Restriction of XML Entity         │
+│             │                │          │        │                   │               │ Expansion Depth in libexpat                                 │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-8176                   │
+├─────────────┼────────────────┤          │        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ libssl3     │ CVE-2024-12797 │          │        │ 3.3.2-r4          │ 3.3.3-r0      │ openssl: RFC7250 handshakes with unauthenticated servers    │
+│             │                │          │        │                   │               │ don't abort as expected                                     │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-12797                  │
+│             ├────────────────┼──────────┤        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│             │ CVE-2024-13176 │ MEDIUM   │        │                   │ 3.3.2-r5      │ openssl: Timing side-channel in ECDSA signature computation │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-13176                  │
+├─────────────┼────────────────┤          │        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ libtasn1    │ CVE-2024-12133 │          │        │ 4.19.0-r2         │ 4.20.0-r0     │ libtasn1: Inefficient DER Decoding in libtasn1 Leading to   │
+│             │                │          │        │                   │               │ Potential Remote DoS                                        │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-12133                  │
+├─────────────┼────────────────┼──────────┤        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ musl        │ CVE-2025-26519 │ UNKNOWN  │        │ 1.2.5-r8          │ 1.2.5-r9      │ musl libc 0.9.13 through 1.2.5 before 1.2.6 has an          │
+│             │                │          │        │                   │               │ out-of-bounds write ......                                  │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-26519                  │
+├─────────────┤                │          │        │                   │               │                                                             │
+│ musl-utils  │                │          │        │                   │               │                                                             │
+│             │                │          │        │                   │               │                                                             │
+│             │                │          │        │                   │               │                                                             │
+├─────────────┼────────────────┼──────────┤        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ openssl     │ CVE-2024-12797 │ HIGH     │        │ 3.3.2-r4          │ 3.3.3-r0      │ openssl: RFC7250 handshakes with unauthenticated servers    │
+│             │                │          │        │                   │               │ don't abort as expected                                     │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-12797                  │
+│             ├────────────────┼──────────┤        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│             │ CVE-2024-13176 │ MEDIUM   │        │                   │ 3.3.2-r5      │ openssl: Timing side-channel in ECDSA signature computation │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2024-13176                  │
+├─────────────┼────────────────┤          │        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ sqlite-libs │ CVE-2025-29087 │          │        │ 3.47.1-r0         │ 3.48.0-r1     │ sqlite: Integer Overflow in SQLite concat_ws Function       │
+│             │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2025-29087                  │
+└─────────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴─────────────────────────────────────────────────────────────┘
+
+Java (jar)
+==========
+Total: 44 (UNKNOWN: 0, LOW: 1, MEDIUM: 23, HIGH: 18, CRITICAL: 2)
+
+┌───────────────────────────────────────────────────────────┬──────────────────┬──────────┬────────┬───────────────────┬─────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
+│                          Library                          │  Vulnerability   │ Severity │ Status │ Installed Version │            Fixed Version            │                            Title                             │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┼────────┼───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ ch.qos.logback:logback-classic                            │ CVE-2023-6378    │ HIGH     │ fixed  │ 1.2.12            │ 1.3.12, 1.4.12, 1.2.13              │ logback: serialization vulnerability in logback receiver     │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-6378                    │
+├───────────────────────────────────────────────────────────┤                  │          │        │                   │                                     │                                                              │
+│ ch.qos.logback:logback-core                               │                  │          │        │                   │                                     │                                                              │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │                                                              │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-6481    │          │        │                   │ 1.4.14, 1.3.14, 1.2.13              │ logback: A serialization vulnerability in logback receiver   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-6481                    │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-12798   │ MEDIUM   │        │                   │ 1.5.13, 1.3.15                      │ logback-core: arbitrary code execution via                   │
+│                                                           │                  │          │        │                   │                                     │ JaninoEventEvaluator                                         │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-12798                   │
+│                                                           ├──────────────────┼──────────┤        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-12801   │ LOW      │        │                   │                                     │ logback-core: SaxEventRecorder vulnerable to Server-Side     │
+│                                                           │                  │          │        │                   │                                     │ Request Forgery (SSRF) attacks                               │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-12801                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ io.netty:netty-common (shopping-cart-0.0.1-SNAPSHOT.jar)  │ CVE-2024-47535   │ MEDIUM   │        │ 4.1.92.Final      │ 4.1.115.Final                       │ netty: Denial of Service attack on windows app using Netty   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-47535                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2025-25193   │          │        │                   │ 4.1.118.Final                       │ netty: Denial of Service attack on windows app using Netty   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2025-25193                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│ io.netty:netty-handler (shopping-cart-0.0.1-SNAPSHOT.jar) │ CVE-2025-24970   │ HIGH     │        │                   │                                     │ io.netty:netty-handler: SslHandler doesn't correctly         │
+│                                                           │                  │          │        │                   │                                     │ validate packets which can lead to native crash...           │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2025-24970                   │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-34462   │ MEDIUM   │        │                   │ 4.1.94.Final                        │ netty: SniHandler 16MB allocation leads to OOM               │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-34462                   │
+├───────────────────────────────────────────────────────────┼──────────────────┤          │        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.apache.kafka:kafka-clients                            │ CVE-2024-31141   │          │        │ 3.1.2             │ 3.7.1                               │ kafka-clients: privilege escalation to filesystem            │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ read-access via automatic ConfigProvider                     │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-31141                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.apache.tomcat.embed:tomcat-embed-core                 │ CVE-2025-24813   │ CRITICAL │        │ 9.0.75            │ 11.0.3, 10.1.35, 9.0.99             │ tomcat: Potential RCE and/or information disclosure and/or   │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ information corruption with partial PUT...                   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2025-24813                   │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-46589   │ HIGH     │        │                   │ 11.0.0-M11, 10.1.16, 9.0.83, 8.5.96 │ tomcat: HTTP request smuggling via malformed trailer headers │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-46589                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-34750   │          │        │                   │ 11.0.0-M21, 10.1.25, 9.0.90         │ tomcat: Improper Handling of Exceptional Conditions          │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-34750                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-50379   │          │        │                   │ 11.0.2, 10.1.34, 9.0.98             │ tomcat: RCE due to TOCTOU issue in JSP compilation           │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-50379                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-56337   │          │        │                   │                                     │ tomcat: Incomplete fix for CVE-2024-50379 - RCE due to       │
+│                                                           │                  │          │        │                   │                                     │ TOCTOU issue in...                                           │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-56337                   │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-41080   │ MEDIUM   │        │                   │ 8.5.93, 9.0.80, 10.1.13, 11.0.0-M11 │ tomcat: Open Redirect vulnerability in FORM authentication   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-41080                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-42795   │          │        │                   │ 11.0.0-M12, 10.1.14, 9.0.81, 8.5.94 │ tomcat: improper cleaning of recycled objects could lead to  │
+│                                                           │                  │          │        │                   │                                     │ information leak                                             │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-42795                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-44487   │          │        │                   │                                     │ HTTP/2: Multiple HTTP/2 enabled web servers are vulnerable   │
+│                                                           │                  │          │        │                   │                                     │ to a DDoS attack...                                          │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-44487                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-45648   │          │        │                   │                                     │ tomcat: incorrectly parsed http trailer headers can cause    │
+│                                                           │                  │          │        │                   │                                     │ request smuggling                                            │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-45648                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-24549   │          │        │                   │ 8.5.99, 9.0.86, 10.1.19, 11.0.0-M17 │ Tomcat: HTTP/2 header handling DoS                           │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-24549                   │
+├───────────────────────────────────────────────────────────┼──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.apache.tomcat.embed:tomcat-embed-websocket            │ CVE-2024-23672   │          │        │                   │ 11.0.0-M17, 10.1.19, 9.0.86, 8.5.99 │ Tomcat: WebSocket DoS with incomplete closing handshake      │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-23672                   │
+├───────────────────────────────────────────────────────────┼──────────────────┤          │        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.springframework.boot:spring-boot-actuator             │ CVE-2023-34055   │          │        │ 2.7.12            │ 2.7.18, 3.0.13, 3.1.6               │ spring-boot: org.springframework.boot: spring-boot-actuator  │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ class vulnerable to denial of service                        │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-34055                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.springframework.kafka:spring-kafka                    │ CVE-2023-34040   │ HIGH     │        │ 2.8.11            │ 2.9.11, 3.0.10                      │ Spring-Kafka has Java Deserialization vulnerability When     │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ Improperly Configured                                        │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-34040                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.springframework:spring-context                        │ CVE-2024-38820   │ MEDIUM   │        │ 5.3.27            │ 6.1.14                              │ The fix for CVE-2022-22968 made disallowedFieldspatterns in  │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ DataBinder ...                                               │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-38820                   │
+├───────────────────────────────────────────────────────────┼──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.springframework:spring-expression                     │ CVE-2024-38808   │          │        │                   │ 5.3.39                              │ spring-expression: Denial of service when processing a       │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ specially crafted Spring Expression Language...              │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-38808                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.springframework:spring-web                            │ CVE-2016-1000027 │ CRITICAL │        │                   │ 6.0.0                               │ spring: HttpInvokerServiceExporter readRemoteInvocation      │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ method untrusted java deserialization                        │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2016-1000027                 │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-22243   │ HIGH     │        │                   │ 6.1.4, 6.0.17, 5.3.32               │ springframework: URL Parsing with Host Validation            │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-22243                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-22259   │          │        │                   │ 6.1.5, 6.0.18, 5.3.33               │ springframework: URL Parsing with Host Validation            │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-22259                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-22262   │          │        │                   │ 5.3.34, 6.0.19, 6.1.6               │ springframework: URL Parsing with Host Validation            │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-22262                   │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-38809   │ MEDIUM   │        │                   │ 5.3.38, 6.0.23, 6.1.12              │ org.springframework:spring-web: Spring Framework DoS via     │
+│                                                           │                  │          │        │                   │                                     │ conditional HTTP request                                     │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-38809                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.springframework:spring-webmvc                         │ CVE-2024-38816   │ HIGH     │        │                   │ 6.1.13                              │ spring-webmvc: Path Traversal Vulnerability in Spring        │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ Applications Using RouterFunctions and FileSystemResource    │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-38816                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-38819   │          │        │                   │ 6.1.14                              │ org.springframework:spring-webmvc: Path traversal            │
+│                                                           │                  │          │        │                   │                                     │ vulnerability in functional web frameworks                   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-38819                   │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2024-38828   │ MEDIUM   │        │                   │ 5.3.42                              │ org.springframework:spring-webmvc: DoS via Spring MVC        │
+│                                                           │                  │          │        │                   │                                     │ controller method with byte[] parameter                      │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2024-38828                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.xerial.snappy:snappy-java                             │ CVE-2023-34455   │ HIGH     │        │ 1.1.8.4           │ 1.1.10.1                            │ snappy-java: Unchecked chunk length leads to DoS             │
+│ (shopping-cart-0.0.1-SNAPSHOT.jar)                        │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-34455                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-43642   │          │        │                   │ 1.1.10.4                            │ snappy-java: Missing upper bound check on chunk length in    │
+│                                                           │                  │          │        │                   │                                     │ snappy-java can lead...                                      │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-43642                   │
+│                                                           ├──────────────────┼──────────┤        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-34453   │ MEDIUM   │        │                   │ 1.1.10.1                            │ snappy-java: Integer overflow in shuffle leads to DoS        │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-34453                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2023-34454   │          │        │                   │                                     │ snappy-java: Integer overflow in compress leads to DoS       │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2023-34454                   │
+├───────────────────────────────────────────────────────────┼──────────────────┼──────────┤        ├───────────────────┼─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│ org.yaml:snakeyaml (shopping-cart-0.0.1-SNAPSHOT.jar)     │ CVE-2022-1471    │ HIGH     │        │ 1.30              │ 2.0                                 │ SnakeYaml: Constructor Deserialization Remote Code Execution │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-1471                    │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2022-25857   │          │        │                   │ 1.31                                │ snakeyaml: Denial of Service due to missing nested depth     │
+│                                                           │                  │          │        │                   │                                     │ limitation for collections...                                │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-25857                   │
+│                                                           ├──────────────────┼──────────┤        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2022-38749   │ MEDIUM   │        │                   │                                     │ snakeyaml: Uncaught exception in                             │
+│                                                           │                  │          │        │                   │                                     │ org.yaml.snakeyaml.composer.Composer.composeSequenceNode     │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-38749                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2022-38750   │          │        │                   │                                     │ snakeyaml: Uncaught exception in                             │
+│                                                           │                  │          │        │                   │                                     │ org.yaml.snakeyaml.constructor.BaseConstructor.constructObj- │
+│                                                           │                  │          │        │                   │                                     │ ect                                                          │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-38750                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2022-38751   │          │        │                   │                                     │ snakeyaml: Uncaught exception in                             │
+│                                                           │                  │          │        │                   │                                     │ java.base/java.util.regex.Pattern$Ques.match                 │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-38751                   │
+│                                                           ├──────────────────┤          │        │                   ├─────────────────────────────────────┼──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2022-38752   │          │        │                   │ 1.32                                │ snakeyaml: Uncaught exception in                             │
+│                                                           │                  │          │        │                   │                                     │ java.base/java.util.ArrayList.hashCode                       │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-38752                   │
+│                                                           ├──────────────────┤          │        │                   │                                     ├──────────────────────────────────────────────────────────────┤
+│                                                           │ CVE-2022-41854   │          │        │                   │                                     │ dev-java/snakeyaml: DoS via stack overflow                   │
+│                                                           │                  │          │        │                   │                                     │ https://avd.aquasec.com/nvd/cve-2022-41854                   │
+└───────────────────────────────────────────────────────────┴──────────────────┴──────────┴────────┴───────────────────┴─────────────────────────────────────┴──────────────────────────────────────────────────────────────┘
