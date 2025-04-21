@@ -11,7 +11,7 @@ pipeline {
             steps {
                 ansiblePlaybook(playbook: 'infra/ansible/playbooks/build.yml',
                                 inventory: 'infra/ansible/hosts',
-                                credentialsId: 'VAULT_PASSWORD_FILE')
+                                vaultCredentialsId: 'VAULT_PASSWORD_FILE')
             }
         }
         stage('Docker') {
@@ -19,7 +19,7 @@ pipeline {
                 ansiblePlaybook(
                   playbook: 'infra/ansible/playbooks/docker.yml',
                   inventory: 'infra/ansible/hosts',
-                  credentialsId: 'VAULT_PASSWORD_FILE'
+                  vaultCredentialsId: 'VAULT_PASSWORD_FILE'
                 )
             }
         }
@@ -27,7 +27,7 @@ pipeline {
             steps {
                 ansiblePlaybook(playbook: 'infra/ansible/playbooks/trivy.yml',
                                 inventory: 'infra/ansible/hosts',
-                                credentialsId: 'VAULT_PASSWORD_FILE')
+                                vaultCredentialsId: 'VAULT_PASSWORD_FILE')
             }
         }
     }
