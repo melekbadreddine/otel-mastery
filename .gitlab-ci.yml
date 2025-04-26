@@ -1,0 +1,104 @@
+# Define pipeline stages
+stages:
+  - checkout
+  - build
+  - docker
+  - security_scan
+  - deploy
+
+# Global variables
+variables:
+  DOCKER_TLS_CERTDIR: ""
+  DOCKER_DRIVER: overlay2
+
+# 1️⃣ Checkout (no-op; GitLab auto-checks out by default)
+checkout:
+  stage: checkout
+  script:
+    - echo "Code checked out to $CI_PROJECT_DIR"
+  rules:
+    - when: always
+
+# 2️⃣ Build: Go, Maven, and Angular
+build:
+  stage: build
+  image: golang:1.20-alpine
+  before_script:
+    - apk add --no-cache bash maven nodejs npm
+  script:
+    # Build Go services
+    - cd src/inventory-management && go build -v
+    - cd ../product-catalog    && go build -v
+    # Build Spring Boot services
+    - cd ../shopping-cart      && mvn clean package
+    - cd ../order-processing   && mvn clean package
+    # Build Angular UI
+    - cd ../../store-ui        && npm install && npm run build
+  artifacts:
+    paths:
+      - src/inventory-management/inventory-management
+      - src/product-catalog/product-catalog
+      - src/shopping-cart/target/*.jar
+      - src/order-processing/target/*.jar
+      - src/store-ui/dist/
+
+# 3️⃣ Docker: build & push images via Docker-in-Docker
+docker:
+  stage: docker
+  image: docker:24.0.5
+  services:
+    - name: docker:24.0.5-dind
+      alias: docker
+  before_script:
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+  script:
+    - >
+      for svc in inventory order-processing orders cart products store ui; do
+        docker build --pull -t "$DOCKERHUB_USERNAME/$svc:latest" src/${svc//ui/store-ui} &&
+        docker push "$DOCKERHUB_USERNAME/$svc:latest";
+      done                                                                       # :contentReference[oaicite:5]{index=5}
+
+# 4️⃣ Security scan: filesystem & image scans with Trivy
+security_scan:
+  stage: security_scan
+  image:
+    name: aquasec/trivy:latest
+    entrypoint: [""]
+  script:
+    # Filesystem scan
+    - trivy fs --no-progress --format table --output docs/trivy/trivyfs.txt .
+    # Image scans
+    - |
+      for img in products orders cart inventory; do
+        trivy image --no-progress --format table \
+          --output docs/trivy/images/${img}.txt \
+          "$DOCKERHUB_USERNAME/$img:latest"
+      done
+  artifacts:
+    paths:
+      - docs/trivy/
+    expire_in: 1 week
+
+# 5️⃣ Deploy: apply Kubernetes manifests and verify rollouts
+deploy:
+  stage: deploy
+  image: bitnami/kubectl:latest
+  before_script:
+    # Configure kubeconfig from CI variable
+    - mkdir -p ~/.kube
+    - echo "$KUBECONFIG_CI" > ~/.kube/config
+  script:
+    # Ensure namespaces
+    - kubectl apply -f infra/k8s/namespaces.yaml
+    # Apply manifests per directory
+    - kubectl apply -n store-infra      -f infra/k8s/store-infra/
+    - kubectl apply -n store-monitoring -f infra/k8s/store-monitoring/
+    - kubectl apply -n otel-system      -f infra/k8s/store-otel/
+    - kubectl apply -n store-app        -f infra/k8s/store-app/
+    # Verify rollouts (fail if not ready within 120s)
+    - kubectl rollout status deployment --all --timeout=120s -n store-infra
+    - kubectl rollout status deployment --all --timeout=120s -n store-monitoring
+    - kubectl rollout status deployment --all --timeout=120s -n otel-system
+    - kubectl rollout status deployment --all --timeout=120s -n store-app
+  only:
+    - master

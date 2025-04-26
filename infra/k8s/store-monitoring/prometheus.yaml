@@ -13,12 +13,15 @@ data:
       - job_name: 'opentelemetry'
         static_configs:
           - targets: ['otel-collector.store-otel:8889']
+      - job_name: 'trivy'
+        static_configs:
+          - targets: ['trivy-operator.trivy-system:8080']
       - job_name: 'jmeter'
         static_configs:
           - targets: ['host.minikube.internal:9270']
     
     remote_write:
-      - url: "http://34.65.171.80/mimir/api/v1/push"
+      - url: "http://34.65.239.174/mimir/api/v1/push"
         headers:
           X-Scope-OrgID: "qim-info"
         name: "mimir-long-term-storage"
