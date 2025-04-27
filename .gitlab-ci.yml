@@ -22,7 +22,7 @@ checkout:
 # 2️⃣ Build: Go, Maven, and Angular
 build:
   stage: build
-  image: golang:1.20-alpine
+  image: golang:1.22-alpine 
   before_script:
     - apk add --no-cache bash maven nodejs npm
   script:
