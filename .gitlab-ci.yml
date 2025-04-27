@@ -18,7 +18,7 @@ checkout:
 
 # 2️⃣ BUILD jobs:
 build_go:
-  stage: build
+  stage: build_go
   image: golang:1.22-alpine
   tags: [go]
   before_script:
@@ -32,7 +32,7 @@ build_go:
       - src/product-catalog/product-catalog
 
 build_maven:
-  stage: build
+  stage: build_maven
   image: maven:3.9.5-openjdk-21
   tags: [maven]
   script:
@@ -44,7 +44,7 @@ build_maven:
       - src/order-processing/target/*.jar
 
 build_angular:
-  stage: build
+  stage: build_angular
   image: node:20-alpine
   tags: [nodejs]
   before_script:
