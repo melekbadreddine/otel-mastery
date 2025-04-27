@@ -9,21 +9,20 @@ variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
 
+# 1️⃣ Checkout
 checkout:
   stage: checkout
   script:
-    - echo "Code checked out to $CI_PROJECT_DIR"
+    - echo "Repository at $CI_PROJECT_DIR"
   rules:
     - when: always
 
-# 2️⃣ BUILD jobs:
+# 2️⃣ BUILD jobs
 build_go:
   stage: build
-  image: golang:1.22-alpine
-  tags: [go]
-  before_script:
-    - apk add --no-cache bash
+  tags: [shell, go]
   script:
+    - go version
     - cd src/inventory-management && go build -v
     - cd ../product-catalog    && go build -v
   artifacts:
@@ -33,9 +32,9 @@ build_go:
 
 build_maven:
   stage: build
-  image: maven:3.9.5-openjdk-21
-  tags: [maven]
+  tags: [shell, maven]
   script:
+    - mvn --version
     - cd src/shopping-cart   && mvn clean package -B
     - cd ../order-processing && mvn clean package -B
   artifacts:
@@ -45,11 +44,9 @@ build_maven:
 
 build_angular:
   stage: build
-  image: node:20-alpine
-  tags: [nodejs]
-  before_script:
-    - apk add --no-cache bash
+  tags: [shell, nodejs]
   script:
+    - node --version
     - cd src/store-ui
     - npm ci
     - npm run build
@@ -57,28 +54,30 @@ build_angular:
     paths:
       - src/store-ui/dist/
 
-# 3️⃣ Docker: build & push images via DinD
+# 3️⃣ Docker: build & push
 docker:
   stage: docker
-  image: docker:24.0.5
-  services:
-    - name: docker:24.0.5-dind
-      alias: docker
-  before_script:
-    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+  tags: [shell]
   script:
+    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
     - |
-      for svc in inventory product-catalog shopping-cart order-processing cart products store; do
-        docker build --pull -t "$DOCKERHUB_USERNAME/$svc:latest" src/${svc//store/store-ui} &&
-        docker push "$DOCKERHUB_USERNAME/$svc:latest"
+      declare -A images=(
+        [products]=src/product-catalog
+        [cart]=src/shopping-cart
+        [orders]=src/order-processing
+        [inventory]=src/inventory-management
+        [store]=src/store-ui
+      )
+      for name in "${!images[@]}"; do
+        path=${images[$name]}
+        docker build --pull -t "$DOCKERHUB_USERNAME/$name:latest" "$path" &&
+        docker push "$DOCKERHUB_USERNAME/$name:latest"
       done
 
-# 4️⃣ Security scans with Trivy
+# 4️⃣ Security scan
 security_scan:
   stage: security_scan
-  image:
-    name: aquasec/trivy:latest
-    entrypoint: [""]
+  tags: [shell]
   script:
     - trivy fs --no-progress --format table --output docs/trivy/trivyfs.txt .
     - |
@@ -91,23 +90,3 @@ security_scan:
     paths:
       - docs/trivy/
     expire_in: 1 week
-
-# 5️⃣ Deploy to Kubernetes
-deploy:
-  stage: deploy
-  image: bitnami/kubectl:latest
-  before_script:
-    - mkdir -p ~/.kube
-    - echo "$KUBECONFIG_CI" > ~/.kube/config
-  script:
-    - kubectl apply -f infra/k8s/namespaces.yaml
-    - kubectl apply -n store-infra      -f infra/k8s/store-infra/
-    - kubectl apply -n store-monitoring -f infra/k8s/store-monitoring/
-    - kubectl apply -n otel-system      -f infra/k8s/store-otel/
-    - kubectl apply -n store-app        -f infra/k8s/store-app/
-    - kubectl rollout status deployment --all --timeout=120s -n store-infra
-    - kubectl rollout status deployment --all --timeout=120s -n store-monitoring
-    - kubectl rollout status deployment --all --timeout=120s -n otel-system
-    - kubectl rollout status deployment --all --timeout=120s -n store-app
-  only:
-    - master
