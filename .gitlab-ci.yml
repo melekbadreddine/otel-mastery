@@ -1,8 +1,6 @@
 stages:
   - checkout
-  - build_go
-  - build_maven
-  - build_angular
+  - build
   - docker
   - security_scan
   - deploy
@@ -20,7 +18,7 @@ checkout:
 
 # 2️⃣ BUILD jobs:
 build_go:
-  stage: build_go
+  stage: build
   image: golang:1.22-alpine
   tags: [go]
   before_script:
@@ -34,7 +32,7 @@ build_go:
       - src/product-catalog/product-catalog
 
 build_maven:
-  stage: build_maven
+  stage: build
   image: maven:3.9.5-openjdk-21
   tags: [maven]
   script:
@@ -46,7 +44,7 @@ build_maven:
       - src/order-processing/target/*.jar
 
 build_angular:
-  stage: build_angular
+  stage: build
   image: node:20-alpine
   tags: [nodejs]
   before_script:
