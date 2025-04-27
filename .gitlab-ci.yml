@@ -1,4 +1,3 @@
-# Define pipeline stages
 stages:
   - checkout
   - build
@@ -6,12 +5,10 @@ stages:
   - security_scan
   - deploy
 
-# Global variables
 variables:
   DOCKER_TLS_CERTDIR: ""
   DOCKER_DRIVER: overlay2
 
-# 1️⃣ Checkout (no-op; GitLab auto-checks out by default)
 checkout:
   stage: checkout
   script:
@@ -19,30 +16,48 @@ checkout:
   rules:
     - when: always
 
-# 2️⃣ Build: Go, Maven, and Angular
-build:
+# 2️⃣ BUILD jobs:
+build_go:
   stage: build
-  image: golang:1.22-alpine 
+  image: golang:1.22-alpine
+  tags: [go]
   before_script:
-    - apk add --no-cache bash maven nodejs npm
+    - apk add --no-cache bash
   script:
-    # Build Go services
     - cd src/inventory-management && go build -v
     - cd ../product-catalog    && go build -v
-    # Build Spring Boot services
-    - cd ../shopping-cart      && mvn clean package
-    - cd ../order-processing   && mvn clean package
-    # Build Angular UI
-    - cd ../../store-ui        && npm install && npm run build
   artifacts:
     paths:
       - src/inventory-management/inventory-management
       - src/product-catalog/product-catalog
+
+build_maven:
+  stage: build
+  image: maven:3.9.5-openjdk-21
+  tags: [maven]
+  script:
+    - cd src/shopping-cart   && mvn clean package -B
+    - cd ../order-processing && mvn clean package -B
+  artifacts:
+    paths:
       - src/shopping-cart/target/*.jar
       - src/order-processing/target/*.jar
+
+build_angular:
+  stage: build
+  image: node:20-alpine
+  tags: [nodejs]
+  before_script:
+    - apk add --no-cache bash
+  script:
+    - cd src/store-ui
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
       - src/store-ui/dist/
 
-# 3️⃣ Docker: build & push images via Docker-in-Docker
+# 3️⃣ Docker: build & push images via DinD
 docker:
   stage: docker
   image: docker:24.0.5
@@ -52,22 +67,20 @@ docker:
   before_script:
     - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
   script:
-    - >
-      for svc in inventory order-processing orders cart products store ui; do
-        docker build --pull -t "$DOCKERHUB_USERNAME/$svc:latest" src/${svc//ui/store-ui} &&
-        docker push "$DOCKERHUB_USERNAME/$svc:latest";
-      done                                                                       # :contentReference[oaicite:5]{index=5}
+    - |
+      for svc in inventory product-catalog shopping-cart order-processing cart products store; do
+        docker build --pull -t "$DOCKERHUB_USERNAME/$svc:latest" src/${svc//store/store-ui} &&
+        docker push "$DOCKERHUB_USERNAME/$svc:latest"
+      done
 
-# 4️⃣ Security scan: filesystem & image scans with Trivy
+# 4️⃣ Security scans with Trivy
 security_scan:
   stage: security_scan
   image:
     name: aquasec/trivy:latest
     entrypoint: [""]
   script:
-    # Filesystem scan
     - trivy fs --no-progress --format table --output docs/trivy/trivyfs.txt .
-    # Image scans
     - |
       for img in products orders cart inventory; do
         trivy image --no-progress --format table \
@@ -79,23 +92,19 @@ security_scan:
       - docs/trivy/
     expire_in: 1 week
 
-# 5️⃣ Deploy: apply Kubernetes manifests and verify rollouts
+# 5️⃣ Deploy to Kubernetes
 deploy:
   stage: deploy
   image: bitnami/kubectl:latest
   before_script:
-    # Configure kubeconfig from CI variable
     - mkdir -p ~/.kube
     - echo "$KUBECONFIG_CI" > ~/.kube/config
   script:
-    # Ensure namespaces
     - kubectl apply -f infra/k8s/namespaces.yaml
-    # Apply manifests per directory
     - kubectl apply -n store-infra      -f infra/k8s/store-infra/
     - kubectl apply -n store-monitoring -f infra/k8s/store-monitoring/
     - kubectl apply -n otel-system      -f infra/k8s/store-otel/
     - kubectl apply -n store-app        -f infra/k8s/store-app/
-    # Verify rollouts (fail if not ready within 120s)
     - kubectl rollout status deployment --all --timeout=120s -n store-infra
     - kubectl rollout status deployment --all --timeout=120s -n store-monitoring
     - kubectl rollout status deployment --all --timeout=120s -n otel-system
