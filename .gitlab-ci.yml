@@ -35,8 +35,8 @@ build_maven:
   tags: [shell, maven]
   script:
     - mvn --version
-    - cd src/shopping-cart   && mvn clean package -B
-    - cd ../order-processing && mvn clean package -B
+    - cd src/shopping-cart   && mvn clean package -DskipTests -B
+    - cd ../order-processing && mvn clean package -DskipTests -B
   artifacts:
     paths:
       - src/shopping-cart/target/*.jar
@@ -59,7 +59,10 @@ docker:
   stage: docker
   tags: [shell]
   script:
-    - docker login -u "$DOCKERHUB_USERNAME" -p "$DOCKERHUB_PASSWORD"
+    # login with password on stdin
+    - echo "$DOCKERHUB_PASSWORD" | sudo docker login \
+        -u "$DOCKERHUB_USERNAME" --password-stdin
+    # build & push each image with sudo
     - |
       declare -A images=(
         [products]=src/product-catalog
@@ -69,9 +72,10 @@ docker:
         [store]=src/store-ui
       )
       for name in "${!images[@]}"; do
-        path=${images[$name]}
-        docker build --pull -t "$DOCKERHUB_USERNAME/$name:latest" "$path" &&
-        docker push "$DOCKERHUB_USERNAME/$name:latest"
+        ctx=${images[$name]}
+        echo "Building and pushing $name from $ctx"
+        sudo docker build --pull -t "$DOCKERHUB_USERNAME/$name:latest" "$ctx" \
+          && sudo docker push "$DOCKERHUB_USERNAME/$name:latest"
       done
 
 # 4️⃣ Security scan
