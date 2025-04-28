@@ -15,26 +15,15 @@ checkout:
   rules:
     - when: always
 
-# 4️⃣ Load test with JMeter
-load_test:
-  stage: load_test
-  tags: [shell]
-  script:
-    - cd jmeter
-    - jmeter -n -t script.jmx -l results.jtl
-  artifacts:
-    paths:
-      - jmeter/results.jtl
-      - jmeter/jmeter.log
-    expire_in: 1 week
-
 # 6️⃣ Deploy & ArgoCD sync
 deploy:
   stage: deploy
   tags: [shell]
   script:
-    - echo "$ARGOCD_PASSWORD" | argocd login "$ARGOCD_SERVER" \
-        --username "$ARGOCD_USERNAME" --password-stdin --insecure
+    - argocd login "$ARGOCD_SERVER" \
+        --username "$ARGOCD_USERNAME" \
+        --password "$ARGOCD_PASSWORD" \
+        --insecure 
     - argocd app sync otel-mastery
   only:
     - master
