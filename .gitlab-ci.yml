@@ -20,10 +20,7 @@ deploy:
   stage: deploy
   tags: [shell]
   script:
-    - argocd login "$ARGOCD_SERVER" \
-        --username "$ARGOCD_USERNAME" \
-        --password "$ARGOCD_PASSWORD" \
-        --insecure 
+    - argocd login "$ARGOCD_SERVER" --username "$ARGOCD_USERNAME" --password "$ARGOCD_PASSWORD" --insecure
     - argocd app sync otel-mastery
   only:
     - master
