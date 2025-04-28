@@ -22,10 +22,8 @@ load_test:
   script:
     - cd jmeter
     - jmeter -n -t script.jmx -l results.jtl
-    - jmeter -g results.jtl -o report
   artifacts:
     paths:
-      - jmeter/report
       - jmeter/results.jtl
       - jmeter/jmeter.log
     expire_in: 1 week
