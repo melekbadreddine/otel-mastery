@@ -1,7 +1,10 @@
 stages:
   - checkout
-  - load_test
+  - build
+  - docker
+  - security_scan
   - deploy
+  - load_test
 
 variables:
   DOCKER_TLS_CERTDIR: ""
@@ -15,7 +18,82 @@ checkout:
   rules:
     - when: always
 
-# 6️⃣ Deploy & ArgoCD sync
+# 2️⃣ BUILD jobs
+build_go:
+  stage: build
+  tags: [shell, go]
+  script:
+    - go version
+    - cd src/inventory-management && go build -v
+    - cd ../product-catalog    && go build -v
+  artifacts:
+    paths:
+      - src/inventory-management/inventory-management
+      - src/product-catalog/product-catalog
+
+build_maven:
+  stage: build
+  tags: [shell, maven]
+  script:
+    - mvn --version
+    - cd src/shopping-cart   && mvn clean package -DskipTests -B
+    - cd ../order-processing && mvn clean package -DskipTests -B
+  artifacts:
+    paths:
+      - src/shopping-cart/target/*.jar
+      - src/order-processing/target/*.jar
+
+build_angular:
+  stage: build
+  tags: [shell, nodejs]
+  script:
+    - node --version
+    - cd src/store-ui
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - src/store-ui/dist/
+
+# 3️⃣ Docker: build & push
+docker:
+  stage: docker
+  tags: [shell]
+  script:
+    - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - |
+      declare -A images=(
+        [products]=src/product-catalog
+        [cart]=src/shopping-cart
+        [orders]=src/order-processing
+        [inventory]=src/inventory-management
+        [store]=src/store-ui
+      )
+      for name in "${!images[@]}"; do
+        ctx=${images[$name]}
+        echo "Building and pushing $name from $ctx"
+        docker build --pull -t "$DOCKERHUB_USERNAME/$name:latest" "$ctx"
+        docker push "$DOCKERHUB_USERNAME/$name:latest"
+      done
+
+# 4️⃣ Security scan
+security_scan:
+  stage: security_scan
+  tags: [shell]
+  script:
+    - trivy fs --no-progress --format table --output docs/trivy/trivyfs.txt .
+    - |
+      for img in products orders cart inventory; do
+        trivy image --no-progress --format table \
+          --output docs/trivy/images/${img}.txt \
+          "$DOCKERHUB_USERNAME/$img:latest"
+      done
+  artifacts:
+    paths:
+      - docs/trivy/
+    expire_in: 1 week
+
+# 5️⃣ Deploy & ArgoCD sync
 deploy:
   stage: deploy
   tags: [shell]
@@ -24,3 +102,16 @@ deploy:
     - argocd app sync otel-mastery
   only:
     - master
+
+# 6️⃣ Load test with JMeter
+load_test:
+  stage: load_test
+  tags: [shell]
+  script:
+    - cd jmeter
+    - jmeter -n -t script.jmx -l results.jtl
+  artifacts:
+    paths:
+      - jmeter/results.jtl
+      - jmeter/jmeter.log
+    expire_in: 1 week
