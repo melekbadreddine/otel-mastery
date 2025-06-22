@@ -6,7 +6,7 @@ metadata:
 data:
   prometheus.yml: |
     global:
-      scrape_interval: 5s
+      scrape_interval: 15s
       evaluation_interval: 15s
     
     scrape_configs:
@@ -24,7 +24,7 @@ data:
           - targets: ['host.minikube.internal:9270']
     
     remote_write:
-      - url: "http://34.163.205.177/mimir/api/v1/push"
+      - url: "http://34.163.114.227/mimir/api/v1/push"
         headers:
           X-Scope-OrgID: "qim-info"
         name: "mimir-long-term-storage"
@@ -32,49 +32,71 @@ data:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
+  labels:
+    app.kubernetes.io/instance: otel-mastery-all
   name: prometheus
   namespace: store-monitoring
 spec:
-  serviceName: prometheus
+  podManagementPolicy: OrderedReady
   replicas: 1
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: prometheus
+  serviceName: prometheus
   template:
     metadata:
       labels:
         app: prometheus
     spec:
-      securityContext:
-        fsGroup: 65534
       containers:
-      - name: prometheus
-        image: prom/prometheus:v2.49.0
-        args:
+      - args:
         - --config.file=/etc/prometheus/prometheus.yml
         - --storage.tsdb.retention.time=24h
         - --web.enable-lifecycle
         - --storage.tsdb.path=/prometheus/data
+        image: prom/prometheus:v2.49.0
+        imagePullPolicy: IfNotPresent
+        name: prometheus
         ports:
         - containerPort: 9090
           name: http
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
         volumeMounts:
-        - name: config
-          mountPath: /etc/prometheus
-        - name: prometheus-data
-          mountPath: /prometheus
+        - mountPath: /etc/prometheus
+          name: config
+        - mountPath: /prometheus
+          name: prometheus-data
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext:
+        fsGroup: 65534
+      terminationGracePeriodSeconds: 30
       volumes:
-      - name: config
-        configMap:
+      - configMap:
+          defaultMode: 420
           name: prometheus-config
+        name: config
+  updateStrategy:
+    rollingUpdate:
+      partition: 0
+    type: RollingUpdate
   volumeClaimTemplates:
-  - metadata:
+  - apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
       name: prometheus-data
     spec:
-      accessModes: ["ReadWriteOnce"]
+      accessModes:
+      - ReadWriteOnce
       resources:
         requests:
           storage: 5Gi
+      volumeMode: Filesystem
 ---
 apiVersion: v1
 kind: Service

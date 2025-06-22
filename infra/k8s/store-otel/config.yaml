@@ -14,22 +14,6 @@ data:
           http:
             endpoint: "0.0.0.0:4318"
 
-      hostmetrics:
-        collection_interval: 10s
-        scrapers:
-          cpu: {}
-          load: {}
-          memory: {}
-          disk: {}
-          filesystem:
-            exclude_mount_points:
-              match_type: strict
-              mount_points:
-                - /usr/lib/modules
-                - /data
-                - /tmp/hostpath_pv
-                - /tmp/hostpath-provisioner
-
     processors:
       attributes/logs:
         actions:
@@ -45,7 +29,7 @@ data:
           - action: insert
             key: loki.attribute.labels
             value: event.domain, event.name
-      
+
       resource:
         attributes:
           - action: insert
@@ -64,19 +48,22 @@ data:
       batch:
         timeout: 10s
         send_batch_size: 1024
+
       memory_limiter:
         check_interval: 1s
         limit_mib: 1024
 
     exporters:
       logging:
-        loglevel: info
+        loglevel: warn
       prometheus:
         endpoint: "0.0.0.0:8889"
       loki:
-        endpoint: "http://34.163.205.177/loki/loki/api/v1/push" 
+        endpoint: "http://34.163.114.227/loki/loki/api/v1/push"
+        timeout: 30s
       otlphttp:
-        endpoint: "http://34.163.205.177/tempo"
+        endpoint: "http://34.163.114.227/tempo"
+        timeout: 30s
         tls:
           insecure: true
 
@@ -88,7 +75,7 @@ data:
       extensions: [health_check]
       pipelines:
         metrics:
-          receivers: [otlp, hostmetrics]
+          receivers: [otlp]
           processors: [k8sattributes, memory_limiter, batch]
           exporters: [prometheus]
         logs:
